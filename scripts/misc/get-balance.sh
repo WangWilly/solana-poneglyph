@@ -1,0 +1,3 @@
+#!/bin/bash
+
+solana balance

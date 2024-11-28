@@ -162,3 +162,24 @@ anchor test
 - https://www.helius.dev/blog/solana-executive-overview
 
 Rent is a mechanism designed to incentivize users to close accounts and reduce state bloat. To create a new account, a minimum balance of SOL, known as the "rent-exempt" amount, must be held by the account. This can be considered a storage cost incurred to keep the account alive in a validator's memory. If the size of the account's data increases, the minimum balance rent requirement increases proportionally. When an account is no longer needed, it can be closed, and the rent is returned to the account owner.
+
+### Anchor
+
+@metaplex-foundation/umi is a library used in the Solana ecosystem, particularly for interacting with Metaplex, a protocol for creating and managing NFTs (Non-Fungible Tokens) on the Solana blockchain. It provides tools and utilities to facilitate the development of applications that involve NFTs, such as minting, transferring, and managing NFT metadata.
+
+- https://stackoverflow.com/questions/78031339/how-to-test-metaplex-instructions-with-anchor-on-localnet
+
+### Common Commands
+
+```bash
+solana config get # Get the current Solana cluster configuration
+solana config set --url https://api.devnet.solana.com # Set the Solana cluster configuration
+solana balance # Get the balance of the current wallet
+solana airdrop 2 ~/.config/solana/id.json # Airdrop 1 SOL to the current wallet
+solana address # Get the public key of the current wallet
+solana keygen new --outfile ~/.config/solana/id.json # Generate a new keypair
+
+solana transfer 1 [public-key] # Transfer 1 SOL to the specified public key
+solana transfer --allow-unfunded-recipient 1 [public-key] # Transfer 1 SOL to the specified public key even if it's unfunded
+solana transfer --allow-unfunded-recipient 1 [public-key] --from ~/.config/solana/id.json # Transfer 1 SOL from the current wallet to the specified public key even if it's unfunded
+```
