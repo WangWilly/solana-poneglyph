@@ -1,14 +1,13 @@
 use anchor_lang::prelude::*;
 
 mod ticket;
-use ticket::create::*;
+use ticket::{create::*, transfer::*};
 
 ////////////////////////////////////////////////////////////////////////////////
 
 declare_id!("ExAzZQ8rEFwiTHybeRwMGzGiheMm4TtsNwy5KwwH4cqd");
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Ref: https://developers.metaplex.com/core/guides/anchor/how-to-create-a-core-nft-asset-with-anchor
 
 #[program]
 pub mod utils {
@@ -17,5 +16,11 @@ pub mod utils {
     pub fn create_ticket(ctx: Context<CreateTicketAccounts>, args: CreateTicketArgs) -> Result<()> {
         create_ticket_impl(ctx, args)
     }
-}
 
+    pub fn transfer_ticket(
+        ctx: Context<TransferTicketAccounts>,
+        args: TransferTicketArgs,
+    ) -> Result<()> {
+        transfer_ticket_impl(ctx, args)
+    }
+}

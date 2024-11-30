@@ -1,14 +1,10 @@
 use anchor_lang::prelude::*;
 
 use mpl_core::{
+    accounts::BaseCollectionV1,
+    instructions::CreateV2CpiBuilder,
+    // types::{Plugin, FreezeDelegate, PluginAuthority,PluginAuthorityPair}
     ID as MPL_CORE_ID,
-    accounts::BaseCollectionV1, 
-    instructions::CreateV2CpiBuilder, 
-};
-
-use mpl_core::types::{
-    Plugin, FreezeDelegate, PluginAuthority,
-    PluginAuthorityPair,
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +15,14 @@ pub struct CreateTicketArgs {
     uri: String,
 }
 
-pub fn create_ticket_impl(ctx: Context<CreateTicketAccounts>, args: CreateTicketArgs) -> Result<()> {
+pub fn create_ticket_impl(
+    ctx: Context<CreateTicketAccounts>,
+    args: CreateTicketArgs,
+) -> Result<()> {
+    msg!("Creating a ticket...");
+
+    ////////////////////////////////////////////////////////////////////////
+
     let collection = match &ctx.accounts.collection {
         Some(collection) => Some(collection.to_account_info()),
         None => None,
@@ -39,27 +42,27 @@ pub fn create_ticket_impl(ctx: Context<CreateTicketAccounts>, args: CreateTicket
         Some(update_authority) => Some(update_authority.to_account_info()),
         None => None,
     };
-    
-    ////////////////////////////////////////////////////////////////////////
-
-    let mut plugins: Vec<PluginAuthorityPair> = vec![];
-
-    plugins.push(
-        PluginAuthorityPair { 
-            plugin: Plugin::FreezeDelegate(FreezeDelegate {frozen: true}), 
-            authority: Some(PluginAuthority::UpdateAuthority) 
-        }
-    );
 
     ////////////////////////////////////////////////////////////////////////
 
-    // Before passing these accounts to the CreateV2CpiBuilder program instruction, 
+    // let mut plugins: Vec<PluginAuthorityPair> = vec![];
+
+    // plugins.push(
+    //     PluginAuthorityPair {
+    //         plugin: Plugin::FreezeDelegate(FreezeDelegate {frozen: true}),
+    //         authority: Some(PluginAuthority::UpdateAuthority) // Freeze infintely
+    //     }
+    // );
+
+    ////////////////////////////////////////////////////////////////////////
+
+    // Before passing these accounts to the CreateV2CpiBuilder program instruction,
     // they need to be converted to their raw data form using the .to_account_info() method.
 
     // CreateV2CpiBuilder::new is used to construct a Cross-Program Invocation (CPI)
     // to the Metaplex Core program's CreateV2 instruction.
     CreateV2CpiBuilder::new(&ctx.accounts.mpl_core_program.to_account_info()) // It uses the builder pattern to construct the CPI, allowing for a clear and flexible way to set up the instruction parameters.
-        // Account Setup: The builder methods (like .asset(), .collection(), etc.) are used to 
+        // Account Setup: The builder methods (like .asset(), .collection(), etc.) are used to
         // specify which accounts should be passed to the Core program's instruction.
         .asset(&ctx.accounts.asset.to_account_info())
         .collection(collection.as_ref())
@@ -73,7 +76,7 @@ pub fn create_ticket_impl(ctx: Context<CreateTicketAccounts>, args: CreateTicket
         .uri(args.uri)
         // Plugin Setup: The .plugins() method is used to specify the plugins that should be applied to the asset.
         // https://developers.metaplex.com/core/plugins
-        .plugins(plugins)
+        // .plugins(plugins)
         // Execution: The .invoke() method at the end actually sends the constructed instruction to the Metaplex Core program for execution.
         .invoke()?;
 

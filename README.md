@@ -152,6 +152,28 @@ anchor build
 
 - https://solana.com/docs/programs/deploying
 
+## Milestones
+
+- [x] Initialize the project.
+- [x] Create a new program.
+- [x] Create a new instruction.
+- [x] Create a MPL Core Account.
+    - https://developers.metaplex.com/core/using-core-in-anchor
+    - https://developers.metaplex.com/core/guides/anchor/how-to-create-a-core-nft-asset-with-anchor
+    - https://developers.metaplex.com/core/getting-started/rust
+- [ ] Batch create MPL Core Accounts.
+- [ ] Create a MPL Core Account with a plugin.
+- [ ] Create a MPL Core Account with a plugin and a collection.
+    - If you are transferring an Asset which has a collection you will need to pass the collection address in.
+    - https://developers.metaplex.com/core/collections
+- [ ] Transfer a MPL Core Account.
+    - https://developers.metaplex.com/core/transfer
+    - https://github.com/solana-developers/program-examples/tree/main/tokens/transfer-tokens/anchor/programs/transfer-tokens
+- [ ] Set the price of a MPL Core Account.
+- [ ] Set the rules of marketing a MPL Core Account.
+- [ ] Encrypt the data of a MPL Core Account with a secret.
+
+
 ## Learnings
 
 ![solana structure](./docs/sol-structure.png)
