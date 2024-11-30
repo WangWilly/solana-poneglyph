@@ -145,12 +145,12 @@ anchor build
 
 ## Test
 
+https://developers.metaplex.com/core/helpers
+
 ```bash
 ./scripts/misc/set-metaplex-core.sh
 ./scripts/test-contract.sh
 ```
-
-- https://solana.com/docs/programs/deploying
 
 ## Milestones
 
@@ -166,7 +166,7 @@ anchor build
 - [ ] Create a MPL Core Account with a plugin and a collection.
     - If you are transferring an Asset which has a collection you will need to pass the collection address in.
     - https://developers.metaplex.com/core/collections
-- [ ] Transfer a MPL Core Account.
+- [x] Transfer a MPL Core Account.
     - https://developers.metaplex.com/core/transfer
     - https://github.com/solana-developers/program-examples/tree/main/tokens/transfer-tokens/anchor/programs/transfer-tokens
 - [ ] Set the price of a MPL Core Account.
@@ -175,6 +175,8 @@ anchor build
 
 
 ## Learnings
+
+- [Solana deploying](https://solana.com/docs/programs/deploying)
 
 ![solana structure](./docs/sol-structure.png)
 
