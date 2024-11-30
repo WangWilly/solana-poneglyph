@@ -1,24 +1,30 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { CreateCoreAssetExample } from "../target/types/create_core_asset_example";
+import { Utils } from "../target/types/utils";
 import { Keypair, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 // https://classic.yarnpkg.com/en/package/@metaplex-foundation/mpl-core
 import { MPL_CORE_PROGRAM_ID } from "@metaplex-foundation/mpl-core";
 
+////////////////////////////////////////////////////////////////////////////////
+
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
+import { fetchAsset } from '@metaplex-foundation/mpl-core'
+
+////////////////////////////////////////////////////////////////////////////////
+
 describe("create-core-asset-example", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   const wallet = anchor.Wallet.local();
-  // const wallet = anchor.web3.Keypair.generate();
-  const program = anchor.workspace.CreateCoreAssetExample as Program<CreateCoreAssetExample>;
+  const program = anchor.workspace.utils as Program<Utils>;
 
   let asset = Keypair.generate();
 
   it("Create Asset", async () => {
+    console.log("Wallet / CoreAssetOwner:", wallet.publicKey.toBase58());
 
     let createAssetArgs = {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
-      dataAuthority: wallet.publicKey,
     };
   
     // Ensure the wallet has enough lamports
@@ -43,12 +49,9 @@ describe("create-core-asset-example", () => {
         mplCoreProgram: MPL_CORE_PROGRAM_ID
       }
 
-      // console.log("Creating asset...", accounts);
-
-      const createAssetTx = await program.methods.createCoreAsset(createAssetArgs)
+      const createAssetTx = await program.methods.createTicket(createAssetArgs)
         .accountsPartial(accounts)
         .signers([asset, wallet.payer])
-        // .signers([asset, wallet])
         .rpc();
 
       console.log(createAssetTx);
@@ -61,5 +64,13 @@ describe("create-core-asset-example", () => {
       }
       throw error;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    // https://developers.metaplex.com/umi/getting-started
+    const umi = createUmi(connection);
+    const assetData = await fetchAsset(umi, asset.publicKey.toString());
+
+    console.log("Asset data:", assetData);
   });
 });
