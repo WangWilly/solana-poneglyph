@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 mod ticket;
-use ticket::{create::*, transfer::*};
+use ticket::{create::*, transfer::*, create_collection::*};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,5 +22,14 @@ pub mod utils {
         args: TransferTicketArgs,
     ) -> Result<()> {
         transfer_ticket_impl(ctx, args)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    
+    pub fn create_collection(
+        ctx: Context<CreateCollectionAccounts>,
+        args: CreateCollectionArgs,
+    ) -> Result<()> {
+        create_collection_impl(ctx, args)
     }
 }

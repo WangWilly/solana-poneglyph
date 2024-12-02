@@ -13,6 +13,7 @@ Toy project to learn how to use the Solana Anchor framework.
 - Scalability: Ticket sales are limited to the capacity of the venue. (?)
 - Centralization: Ticket sales are controlled by a single entity.
 - Network Congestion: High demand for tickets can cause network congestion. (?)
+- https://www.perplexity.ai/search/what-is-the-applied-blockchain-W3RpYWOcTWu8XQ4nSnD53A
 
 ### Solution
 
