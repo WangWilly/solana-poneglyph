@@ -6,7 +6,7 @@ import { Utils } from "../target/types/utils";
 import { Keypair, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 // https://classic.yarnpkg.com/en/package/@metaplex-foundation/mpl-core
-import { MPL_CORE_PROGRAM_ID, fetchAsset, fetchAssetsByOwner, fetchAssetsByCollection, AssetV1 } from "@metaplex-foundation/mpl-core";
+import { MPL_CORE_PROGRAM_ID, fetchAsset, fetchAssetsByOwner, fetchAssetsByCollection, AssetV1, fetchCollection } from "@metaplex-foundation/mpl-core";
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { expect } from "chai";
 
@@ -239,6 +239,13 @@ describe("utils", () => {
       expect(assetsByOwner.length).to.equal(2);
       expect(containsAssetV1(assetsByOwner, assetData1)).to.be.true;
       expect(containsAssetV1(assetsByOwner, assetData2)).to.be.true;
+    }
+    {
+      const collectionData = await fetchCollection(umi, collection.publicKey.toString());
+      console.log("collectionData:", collectionData);
+      expect(collectionData.name).to.equal(createCollectionArgs.name);
+      expect(collectionData.uri).to.equal(createCollectionArgs.uri);
+      expect(collectionData.updateAuthority).to.equal(wallet1.publicKey.toString());
     }
     {
       const assetsByCollection = await fetchAssetsByCollection(umi, collection.publicKey.toString(), {

@@ -181,6 +181,8 @@ https://developers.metaplex.com/core/helpers
 
 ![solana structure](./docs/sol-structure.png)
 
+- https://dev.to/jamland/intro-to-solanaweb3js-6a0
+
 ### Rent Exemption
 
 - https://stackoverflow.com/questions/68915470/solana-rent-exemption

@@ -1013,6 +1013,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "life_helper"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "mpl-core",
+]
+
+[[package]]
 name = "light-poseidon"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
