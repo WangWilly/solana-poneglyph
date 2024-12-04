@@ -34,6 +34,7 @@ pub struct Accounts4CreateTicketV1<'info> {
 
     // https://solana.stackexchange.com/questions/2636/how-to-convert-pubkey-to-accountinfo
     /// CHECK: this account will be checked by the life_helper program
+    #[account(mut)]
     pub life_helper_pda: UncheckedAccount<'info>,
     pub life_helper_program: Program<'info, LifeHelper>,
 
@@ -50,6 +51,7 @@ pub struct Accounts4CreateTicketV1<'info> {
 pub struct Args4CreateTicketV1 {
     name: String,
     uri: String,
+    // TODO:
     // transfer_limit: u16,
 }
 
@@ -96,7 +98,14 @@ pub fn create_ticket_v1_impl(
         oracle_account: ctx.accounts.life_helper_pda.to_account_info(),
         system_program: ctx.accounts.system_program.to_account_info(),
     };
-    let _ = CpiContext::new(life_helper_program, life_helper_cpi_accounts);
+    // https://stackoverflow.com/questions/70675404/cross-program-invocation-with-unauthorized-signer-or-writable-account
+    // https://solana.com/developers/guides/getstarted/how-to-cpi-with-signer
+    let payer_seed = ctx.accounts.payer.to_account_info().key();
+    let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
+    let signer_seeds: &[&[&[u8]]] = &[&[payer_seed.as_ref(), b"mpl-core", bump_seed.as_ref()]];
+    let life_helper_ctx = CpiContext::new(life_helper_program, life_helper_cpi_accounts)
+        .with_signer(signer_seeds);
+    life_helper::cpi::initialize(life_helper_ctx)?;
 
     // https://solana.com/docs/core/pda
     // https://github.com/metaplex-foundation/mpl-core/blob/main/clients/js/src/plugins/lifecycleChecks.ts#L42

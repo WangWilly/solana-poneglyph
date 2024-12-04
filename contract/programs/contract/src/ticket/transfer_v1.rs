@@ -2,6 +2,9 @@ use anchor_lang::prelude::*;
 
 use mpl_core::{instructions::TransferV1CpiBuilder, ID as MPL_CORE_ID};
 
+use life_helper::cpi::accounts::Accounts4Transfer as LifeHelperAccounts4Transfer;
+use life_helper::program::LifeHelper;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Accounts)]
@@ -38,6 +41,10 @@ pub fn transfer_ticket_v1_impl(
 ) -> Result<()> {
     msg!("Transferring a ticket...");
 
+    ////////////////////////////////////////////////////////////////////////
+    
+    // TODO: implement the transfer limit logic
+    
     ////////////////////////////////////////////////////////////////////////
 
     TransferV1CpiBuilder::new(&ctx.accounts.mpl_core_program.to_account_info())

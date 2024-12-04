@@ -2,8 +2,9 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 
 import { Utils } from "../target/types/utils";
+import { LifeHelper } from "../target/types/life_helper";
 
-import { Keypair, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Keypair, SystemProgram, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 // https://classic.yarnpkg.com/en/package/@metaplex-foundation/mpl-core
 import { MPL_CORE_PROGRAM_ID, fetchAsset, fetchAssetsByOwner, fetchAssetsByCollection, AssetV1, fetchCollection } from "@metaplex-foundation/mpl-core";
@@ -36,6 +37,7 @@ describe("utils", () => {
   const umi = createUmi(connection); // https://developers.metaplex.com/umi/getting-started
 
   const program = anchor.workspace.utils as Program<Utils>;
+  const lifeHelperProg = anchor.workspace.lifeHelper as Program<LifeHelper>;
 
   const wallet1 = anchor.Wallet.local();
   const wallet2 = Keypair.generate();
@@ -260,6 +262,13 @@ describe("utils", () => {
   it("should create MTL Core using V1 and transfer with the limit up to 2 times", async () => {
     ////////////////////////////////////////////////////////////////////////////
     /// Arrange
+    const [life_helper_pda, life_helper_seed] = PublicKey.findProgramAddressSync(
+      [
+        anchor.utils.bytes.utf8.encode('mpl-core'),
+      ],
+      lifeHelperProg.programId
+    )
+
     let asset = Keypair.generate();
     let createAssetArgs = {
       name: 'My Asset',
@@ -272,6 +281,8 @@ describe("utils", () => {
       payer: wallet1.publicKey,
       owner: null,
       updateAuthority: null,
+      lifeHelperPda: life_helper_pda,
+      lifeHelperProgram: lifeHelperProg.programId,
       systemProgram: SystemProgram.programId,
       mplCoreProgram: MPL_CORE_PROGRAM_ID
     }
@@ -310,14 +321,9 @@ describe("utils", () => {
       expect(assetData.owner).to.equal(wallet1.publicKey.toString());
       console.log("assetData:", assetData);
       console.log("assetData oracle 1:", assetData.oracles[0]);
-      // const assetsByOwner = await fetchAssetsByOwner(umi, wallet1.publicKey.toString(), {
-      //   skipDerivePlugins: false,
-      // })
-      // expect(assetsByOwner.length).to.equal(1);
-      // expect(assetsByOwner[0].publicKey).to.equal(asset.publicKey.toString());
-      // expect(assetsByOwner[0].name).to.equal(createAssetArgs.name);
-      // expect(assetsByOwner[0].uri).to.equal(createAssetArgs.uri);
-      // expect(assetsByOwner[0].owner).to.equal(wallet1.publicKey.toString());
+      
+      const life_helper_account = await lifeHelperProg.account.validation.fetch(life_helper_pda);
+      console.log("life_helper_account:", life_helper_account);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -326,6 +332,7 @@ describe("utils", () => {
       payer: wallet1.publicKey,
       ticketAsset: asset.publicKey,
       newOwner: wallet2.publicKey,
+      lifeHelperPda: life_helper_pda,
       system_program: SystemProgram.programId,
       mpl_core_program: MPL_CORE_PROGRAM_ID
     };
@@ -333,7 +340,7 @@ describe("utils", () => {
     ////////////////////////////////////////////////////////////////////////////
     /// Act
     await errorHandling(
-      program.methods.transferTicket({})
+      program.methods.transferTicketV1({})
       .accountsPartial(transferAccounts)
       .signers([wallet1.payer])
       .rpc()
