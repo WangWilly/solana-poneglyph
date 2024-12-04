@@ -11,7 +11,7 @@ pub struct Accounts4Transfer<'info> {
     pub signer: Signer<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
-    #[account(mut, seeds = [b"oracle", signer.key().as_ref()], bump = oracle_account.bump)]
+    #[account(mut, seeds = [b"mpl-core"], bump = oracle_account.bump)]
     pub oracle_account: Account<'info, Validation>,
     pub system_program: Program<'info, System>,
 }

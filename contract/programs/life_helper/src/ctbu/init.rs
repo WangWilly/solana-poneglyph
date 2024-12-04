@@ -44,6 +44,7 @@ pub struct Args4Init {
 pub fn initialize_impl(ctx: Context<Accounts4Init>, args: Args4Init) -> Result<()> {
     ctx.accounts.oracle_account.transfer_limit = args.transfer_limit;
     ctx.accounts.oracle_account.curr_transfer = 0;
+    ctx.accounts.oracle_account.bump = ctx.bumps.oracle_account;
 
     ctx.accounts.oracle_account.validation = OracleValidation::V1 {
         create: ExternalValidationResult::Pass,

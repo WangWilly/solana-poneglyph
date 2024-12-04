@@ -42,6 +42,8 @@ describe("utils", () => {
   const wallet1 = anchor.Wallet.local();
   const wallet2 = Keypair.generate();
 
+  //////////////////////////////////////////////////////////////////////////////
+
   async function errorHandling<T>(promise: Promise<T>): Promise<T> {
     try {
       return await promise;
@@ -56,15 +58,39 @@ describe("utils", () => {
     }
   }
 
+  async function expectError<T>(promise: Promise<T>): Promise<boolean> {
+    try {
+      await promise;
+      return false;
+    } catch (error) {
+      // console.log("Caught error:", error);
+      return true;
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+
   beforeEach(async () => {
-    // Ensure the wallet has enough lamports
-    const balance = await connection.getBalance(wallet1.publicKey);
-    // console.log("Balance (sol):", balance / LAMPORTS_PER_SOL);
-    if (balance < 3 * LAMPORTS_PER_SOL) {
-      await connection.requestAirdrop(wallet1.publicKey, 3 * LAMPORTS_PER_SOL);
-      await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for airdrop to complete
+    // Ensure the wallets has enough lamports
+    {
+      const balance = await connection.getBalance(wallet1.publicKey);
+      // console.log("Balance (sol):", balance / LAMPORTS_PER_SOL);
+      if (balance < 3 * LAMPORTS_PER_SOL) {
+        await connection.requestAirdrop(wallet1.publicKey, 3 * LAMPORTS_PER_SOL);
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for airdrop to complete
+      }
+    }
+    {
+      const balance = await connection.getBalance(wallet2.publicKey);
+      // console.log("Balance (sol):", balance / LAMPORTS_PER_SOL);
+      if (balance < 3 * LAMPORTS_PER_SOL) {
+        await connection.requestAirdrop(wallet2.publicKey, 3 * LAMPORTS_PER_SOL);
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for airdrop to complete
+      }
     }
   });
+
+  //////////////////////////////////////////////////////////////////////////////
 
   it("should create MTL Core and transfer", async () => {
     ////////////////////////////////////////////////////////////////////////////
@@ -244,7 +270,7 @@ describe("utils", () => {
     }
     {
       const collectionData = await fetchCollection(umi, collection.publicKey.toString());
-      console.log("collectionData:", collectionData);
+      // console.log("collectionData:", collectionData);
       expect(collectionData.name).to.equal(createCollectionArgs.name);
       expect(collectionData.uri).to.equal(createCollectionArgs.uri);
       expect(collectionData.updateAuthority).to.equal(wallet1.publicKey.toString());
@@ -294,7 +320,8 @@ describe("utils", () => {
       .accountsPartial(accounts)
       .signers([asset, wallet1.payer])
       .rpc()
-    );
+      );
+    /**
     {
       // TODO: https://solana.stackexchange.com/questions/10222/how-can-i-check-the-transaction-logs-in-anchor-test
       const latestBlockHash = await connection.getLatestBlockhash();
@@ -311,6 +338,7 @@ describe("utils", () => {
       });
       console.log("createTx:", createTx);
     }
+    */
 
     ////////////////////////////////////////////////////////////////////////////
     /// Assert
@@ -319,11 +347,11 @@ describe("utils", () => {
       expect(assetData.name).to.equal(createAssetArgs.name);
       expect(assetData.uri).to.equal(createAssetArgs.uri);
       expect(assetData.owner).to.equal(wallet1.publicKey.toString());
-      console.log("assetData:", assetData);
-      console.log("assetData oracle 1:", assetData.oracles[0]);
+      // console.log("assetData:", assetData);
+      // console.log("assetData oracle 1:", assetData.oracles[0]);
       
-      const life_helper_account = await lifeHelperProg.account.validation.fetch(life_helper_pda);
-      console.log("life_helper_account:", life_helper_account);
+      // const life_helper_account = await lifeHelperProg.account.validation.fetch(life_helper_pda);
+      // console.log("life_helper_account:", life_helper_account);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -353,6 +381,29 @@ describe("utils", () => {
       expect(assetData.name).to.equal(createAssetArgs.name);
       expect(assetData.uri).to.equal(createAssetArgs.uri);
       expect(assetData.owner).to.equal(wallet2.publicKey.toString());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    const transferAccounts2 = {
+      payer: wallet2.publicKey,
+      ticketAsset: asset.publicKey,
+      newOwner: wallet1.publicKey,
+      lifeHelperPda: life_helper_pda,
+      system_program: SystemProgram.programId,
+      mpl_core_program: MPL_CORE_PROGRAM_ID
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act & Assert
+    {
+      const errorHappened = await expectError(
+        program.methods.transferTicketV1({})
+        .accountsPartial(transferAccounts2)
+        .signers([wallet2])
+        .rpc()
+      );
+      expect(errorHappened).to.be.true;
     }
   });
 });
