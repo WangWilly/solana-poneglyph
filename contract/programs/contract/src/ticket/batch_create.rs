@@ -1,10 +1,6 @@
 use anchor_lang::prelude::*;
 
-use mpl_core::{
-    accounts::BaseCollectionV1,
-    instructions::CreateV2CpiBuilder,
-    ID as MPL_CORE_ID,
-};
+use mpl_core::{accounts::BaseCollectionV1, instructions::CreateV2CpiBuilder, ID as MPL_CORE_ID};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,10 +68,8 @@ pub fn batch_create_ticket_impl(
     };
 
     ////////////////////////////////////////////////////////////////////////
-    
-    for item in args.items.iter() {
-        
 
+    for item in args.items.iter() {
         CreateV2CpiBuilder::new(&ctx.accounts.mpl_core_program.to_account_info()) // It uses the builder pattern to construct the CPI, allowing for a clear and flexible way to set up the instruction parameters.
             .asset(&ctx.accounts.asset.to_account_info())
             .collection(collection.as_ref())
@@ -91,5 +85,3 @@ pub fn batch_create_ticket_impl(
 
     Ok(())
 }
-
-

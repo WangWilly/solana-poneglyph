@@ -12,20 +12,6 @@ import { expect } from "chai";
 
 ////////////////////////////////////////////////////////////////////////////////
 
-async function errorHandling<T>(promise: Promise<T>): Promise<T> {
-  try {
-    return await promise;
-  } catch (error) {
-    if (error instanceof anchor.web3.SendTransactionError) {
-      console.error("Transaction failed:", error.message);
-      console.error("Logs:", error.logs);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw error;
-  }
-}
-
 function containsAssetV1(array: AssetV1[], item: AssetV1): boolean {
   let res = false;
   array.forEach((element) => {
@@ -53,6 +39,20 @@ describe("utils", () => {
 
   const wallet1 = anchor.Wallet.local();
   const wallet2 = Keypair.generate();
+
+  async function errorHandling<T>(promise: Promise<T>): Promise<T> {
+    try {
+      return await promise;
+    } catch (error) {
+      if (error instanceof anchor.web3.SendTransactionError) {
+        console.error("Transaction failed:", error.message);
+        console.error("Logs:", error.getLogs(connection));
+      } else {
+        console.error("Unexpected error:", error);
+      }
+      throw error;
+    }
+  }
 
   beforeEach(async () => {
     // Ensure the wallet has enough lamports
@@ -254,6 +254,98 @@ describe("utils", () => {
       expect(assetsByCollection.length).to.equal(2);
       expect(containsAssetV1(assetsByCollection, assetData1)).to.be.true;
       expect(containsAssetV1(assetsByCollection, assetData2)).to.be.true;
+    }
+  });
+
+  it("should create MTL Core using V1 and transfer with the limit up to 2 times", async () => {
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    let asset = Keypair.generate();
+    let createAssetArgs = {
+      name: 'My Asset',
+      uri: 'https://example.com/my-asset.json',
+    };
+    const accounts = {
+      asset: asset.publicKey,
+      collection: null,
+      authority: null,
+      payer: wallet1.publicKey,
+      owner: null,
+      updateAuthority: null,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act
+    const createTxSign = await errorHandling(
+      program.methods.createTicketV1(createAssetArgs)
+      .accountsPartial(accounts)
+      .signers([asset, wallet1.payer])
+      .rpc()
+    );
+    {
+      // TODO: https://solana.stackexchange.com/questions/10222/how-can-i-check-the-transaction-logs-in-anchor-test
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: createTxSign,
+        },
+        "confirmed"
+      );
+      const createTx = await connection.getTransaction(createTxSign, {
+        commitment: 'confirmed',
+      });
+      console.log("createTx:", createTx);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Assert
+    {
+      const assetData = await fetchAsset(umi, asset.publicKey.toString());
+      expect(assetData.name).to.equal(createAssetArgs.name);
+      expect(assetData.uri).to.equal(createAssetArgs.uri);
+      expect(assetData.owner).to.equal(wallet1.publicKey.toString());
+      console.log("assetData:", assetData);
+      console.log("assetData oracle 1:", assetData.oracles[0]);
+      // const assetsByOwner = await fetchAssetsByOwner(umi, wallet1.publicKey.toString(), {
+      //   skipDerivePlugins: false,
+      // })
+      // expect(assetsByOwner.length).to.equal(1);
+      // expect(assetsByOwner[0].publicKey).to.equal(asset.publicKey.toString());
+      // expect(assetsByOwner[0].name).to.equal(createAssetArgs.name);
+      // expect(assetsByOwner[0].uri).to.equal(createAssetArgs.uri);
+      // expect(assetsByOwner[0].owner).to.equal(wallet1.publicKey.toString());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    const transferAccounts = {
+      payer: wallet1.publicKey,
+      ticketAsset: asset.publicKey,
+      newOwner: wallet2.publicKey,
+      system_program: SystemProgram.programId,
+      mpl_core_program: MPL_CORE_PROGRAM_ID
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act
+    await errorHandling(
+      program.methods.transferTicket({})
+      .accountsPartial(transferAccounts)
+      .signers([wallet1.payer])
+      .rpc()
+    );
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Assert
+    {
+      const assetData = await fetchAsset(umi, asset.publicKey.toString());
+      expect(assetData.name).to.equal(createAssetArgs.name);
+      expect(assetData.uri).to.equal(createAssetArgs.uri);
+      expect(assetData.owner).to.equal(wallet2.publicKey.toString());
     }
   });
 });

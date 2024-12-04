@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 mod ticket;
-use ticket::{create::*, transfer::*, create_collection::*};
+use ticket::{create::*, create_collection::*, create_v1::*, transfer::*, transfer_v1::*};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,13 @@ pub mod utils {
         create_ticket_impl(ctx, args)
     }
 
+    pub fn create_ticket_v1(
+        ctx: Context<Accounts4CreateTicketV1>,
+        args: Args4CreateTicketV1,
+    ) -> Result<()> {
+        create_ticket_v1_impl(ctx, args)
+    }
+
     pub fn transfer_ticket(
         ctx: Context<TransferTicketAccounts>,
         args: TransferTicketArgs,
@@ -24,8 +31,15 @@ pub mod utils {
         transfer_ticket_impl(ctx, args)
     }
 
+    pub fn transfer_ticket_v1(
+        ctx: Context<Accounts4TransferTicketV1>,
+        args: Args4TransferTicketV1,
+    ) -> Result<()> {
+        transfer_ticket_v1_impl(ctx, args)
+    }
+
     ////////////////////////////////////////////////////////////////////////////
-    
+
     pub fn create_collection(
         ctx: Context<CreateCollectionAccounts>,
         args: CreateCollectionArgs,

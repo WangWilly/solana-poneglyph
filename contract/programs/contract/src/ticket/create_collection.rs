@@ -1,9 +1,6 @@
 use anchor_lang::prelude::*;
 
-use mpl_core::{
-    instructions::CreateCollectionV2CpiBuilder,
-    ID as MPL_CORE_ID,
-};
+use mpl_core::{instructions::CreateCollectionV2CpiBuilder, ID as MPL_CORE_ID};
 
 ////////////////////////////////////////////////////////////////////////////
 

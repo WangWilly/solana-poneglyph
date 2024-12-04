@@ -3,6 +3,7 @@
 Toy project to learn how to use the Solana Anchor framework.
 - https://www.anchor-lang.com/docs/installation
 - https://solana.com/docs/programs/anchor/cpi
+- https://book.anchor-lang.com/
 
 ## Project Design (Ticket seller)
 
@@ -178,15 +179,21 @@ https://developers.metaplex.com/core/helpers
 ## Learnings
 
 - [Solana deploying](https://solana.com/docs/programs/deploying)
+- https://solana.com/docs/programs/anchor/program-structure
 
 ![solana structure](./docs/sol-structure.png)
 
 - https://dev.to/jamland/intro-to-solanaweb3js-6a0
+- https://solana.stackexchange.com/questions/3824/what-does-entrypoint-do-in-solana-rust
+- https://www.anchor-lang.com/docs/errors
+
+- https://www.reddit.com/r/solana/comments/rq7wtt/solana_data_storage/
 
 ### Rent Exemption
 
 - https://stackoverflow.com/questions/68915470/solana-rent-exemption
 - https://www.helius.dev/blog/solana-executive-overview
+- https://www.quicknode.com/guides/solana-development/getting-started/understanding-rent-on-solana
 
 Rent is a mechanism designed to incentivize users to close accounts and reduce state bloat. To create a new account, a minimum balance of SOL, known as the "rent-exempt" amount, must be held by the account. This can be considered a storage cost incurred to keep the account alive in a validator's memory. If the size of the account's data increases, the minimum balance rent requirement increases proportionally. When an account is no longer needed, it can be closed, and the rent is returned to the account owner.
 
@@ -257,6 +264,10 @@ Plugins can be attached to Core Assets or Collection Assets, allowing plugins to
 #### External Plugins (Authority-managed; TBD)
 
 https://developers.metaplex.com/core/external-plugins/app-data
+
+- https://developers.metaplex.com/core/external-plugins/oracle
+- https://developers.metaplex.com/core/guides/oracle-plugin-example
+- https://medium.com/metaplex/all-you-need-to-know-about-the-new-oracle-plugin-e669fc266cb0
 
 ### Common Commands
 
