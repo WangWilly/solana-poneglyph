@@ -465,6 +465,7 @@ describe("utils", () => {
         },
         "confirmed"
       );
+      await new Promise(resolve => setTimeout(resolve, 10000));
       const createTx = await connection.getTransaction(txSign, {
         commitment: 'confirmed',
       });
@@ -510,6 +511,7 @@ describe("utils", () => {
         },
         "confirmed"
       );
+      await new Promise(resolve => setTimeout(resolve, 10000));
       const createTx = await connection.getTransaction(txSign, {
         commitment: 'confirmed',
       });
@@ -556,6 +558,7 @@ describe("utils", () => {
         },
         "confirmed"
       );
+      await new Promise(resolve => setTimeout(resolve, 10000));
       const createTx = await connection.getTransaction(txSign, {
         commitment: 'confirmed',
       });
