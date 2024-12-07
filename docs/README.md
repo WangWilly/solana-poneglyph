@@ -11,7 +11,8 @@
 ## CFMM
 
 Reading list:
-- [ ] https://api.solidcheck.io/pdfs/Uniswap_V1.pdf
+- [x] https://api.solidcheck.io/pdfs/Uniswap_V1.pdf
+    - [Notes](./Uniswap%20V1.pdf)
 - [ ] https://medium.com/oregon-blockchain-group/the-constant-product-market-maker-46c5a3899292
 - [ ] https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159
     - [ ] https://www.blocktempo.com/constant-function-market-makers-defi/
