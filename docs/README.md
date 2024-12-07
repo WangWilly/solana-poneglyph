@@ -11,22 +11,22 @@
 ## CFMM
 
 Reading list:
-- [] https://api.solidcheck.io/pdfs/Uniswap_V1.pdf
-- [] https://medium.com/oregon-blockchain-group/the-constant-product-market-maker-46c5a3899292
-- [] https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159
-    - [] https://www.blocktempo.com/constant-function-market-makers-defi/
-    - [] https://faisalkhan.com/knowledge-center/payments-wiki/f/formulas-for-automated-market-makers-amms/
-- [] https://www.blocktempo.com/how-to-make-money-via-unisawp/
-- [] https://app.uniswap.org/
-    - [] https://github.com/thirdweb-example/dex-contracts/blob/main/contracts/DEX.sol
-    - [] https://github.com/Uniswap/v1-contracts/blob/master/contracts/uniswap_exchange.vy
-    - [] https://www.desmos.com/calculator/mls5kefsp3
-    - [] https://github.com/Aboudoc/Constant-Product-AMM/tree/main
-- [] https://www.reddit.com/r/UniSwap/comments/1ballfn/can_someone_explain_the_swap_fees_im_checking/
-    - [] https://1inch.io/partners/
-    - [] https://www.odos.xyz/
-    - [] https://www.leewayhertz.com/exchange-vs-dex-vs-swap/
-- [] https://en.wikipedia.org/wiki/Constant_function_market_maker
+- [ ] https://api.solidcheck.io/pdfs/Uniswap_V1.pdf
+- [ ] https://medium.com/oregon-blockchain-group/the-constant-product-market-maker-46c5a3899292
+- [ ] https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159
+    - [ ] https://www.blocktempo.com/constant-function-market-makers-defi/
+    - [ ] https://faisalkhan.com/knowledge-center/payments-wiki/f/formulas-for-automated-market-makers-amms/
+- [ ] https://www.blocktempo.com/how-to-make-money-via-unisawp/
+- [ ] https://app.uniswap.org/
+    - [ ] https://github.com/thirdweb-example/dex-contracts/blob/main/contracts/DEX.sol
+    - [ ] https://github.com/Uniswap/v1-contracts/blob/master/contracts/uniswap_exchange.vy
+    - [ ] https://www.desmos.com/calculator/mls5kefsp3
+    - [ ] https://github.com/Aboudoc/Constant-Product-AMM/tree/main
+- [ ] https://www.reddit.com/r/UniSwap/comments/1ballfn/can_someone_explain_the_swap_fees_im_checking/
+    - [ ] https://1inch.io/partners/
+    - [ ] https://www.odos.xyz/
+    - [ ] https://www.leewayhertz.com/exchange-vs-dex-vs-swap/
+- [ ] https://en.wikipedia.org/wiki/Constant_function_market_maker
 
 - CFMMs display pools of liquidity of **two assets** (can be more assets).
     - LPs deposit their assets in the pool.
