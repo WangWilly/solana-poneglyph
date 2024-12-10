@@ -28,45 +28,44 @@ function containsAssetV1(array: AssetV1[], item: AssetV1): boolean {
   return res;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+async function errorHandlingTemplate<T>(connection: anchor.web3.Connection, promise: Promise<T>): Promise<T> {
+  try {
+    return await promise;
+  } catch (error) {
+    if (error instanceof anchor.web3.SendTransactionError) {
+      console.error("Transaction failed:", error.message);
+      console.error("Logs:", error.getLogs(connection));
+    } else {
+      console.error("Unexpected error:", error);
+    }
+    throw error;
+  }
+}
+
+async function expectError<T>(promise: Promise<T>): Promise<boolean> {
+  try {
+    await promise;
+    return false;
+  } catch (error) {
+    // console.log("Caught error:", error);
+    return true;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 describe("utils", () => {
   /// Setup
   anchor.setProvider(anchor.AnchorProvider.env());
   const connection = anchor.getProvider().connection;
   const umi = createUmi(connection); // https://developers.metaplex.com/umi/getting-started
+  const errorHandling = (promise: Promise<any>) => errorHandlingTemplate(connection, promise);
 
   const program = anchor.workspace.utils as Program<Utils>;
   const lifeHelperProg = anchor.workspace.lifeHelper as Program<LifeHelper>;
 
   const wallet1 = anchor.Wallet.local();
   const wallet2 = Keypair.generate();
-
-  //////////////////////////////////////////////////////////////////////////////
-
-  async function errorHandling<T>(promise: Promise<T>): Promise<T> {
-    try {
-      return await promise;
-    } catch (error) {
-      if (error instanceof anchor.web3.SendTransactionError) {
-        console.error("Transaction failed:", error.message);
-        console.error("Logs:", error.getLogs(connection));
-      } else {
-        console.error("Unexpected error:", error);
-      }
-      throw error;
-    }
-  }
-
-  async function expectError<T>(promise: Promise<T>): Promise<boolean> {
-    try {
-      await promise;
-      return false;
-    } catch (error) {
-      // console.log("Caught error:", error);
-      return true;
-    }
-  }
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -143,8 +142,8 @@ describe("utils", () => {
       payer: wallet1.publicKey,
       ticketAsset: asset.publicKey,
       newOwner: wallet2.publicKey,
-      system_program: SystemProgram.programId,
-      mpl_core_program: MPL_CORE_PROGRAM_ID
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -285,20 +284,21 @@ describe("utils", () => {
     }
   });
 
-  it("should create MTL Core using V1 and transfer with the limit up to 2 times", async () => {
+  it("should create MTL Core using V1 and transfer with the limit up to 1 times", async () => {
     ////////////////////////////////////////////////////////////////////////////
     /// Arrange
+    let asset = Keypair.generate();
     const [life_helper_pda, life_helper_seed] = PublicKey.findProgramAddressSync(
       [
         anchor.utils.bytes.utf8.encode('mpl-core'),
+        asset.publicKey.toBuffer(),
       ],
       lifeHelperProg.programId
     )
-
-    let asset = Keypair.generate();
     let createAssetArgs = {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
+      transferLimit: 1,
     };
     const accounts = {
       asset: asset.publicKey,
@@ -315,30 +315,28 @@ describe("utils", () => {
 
     ////////////////////////////////////////////////////////////////////////////
     /// Act
-    const createTxSign = await errorHandling(
-      program.methods.createTicketV1(createAssetArgs)
-      .accountsPartial(accounts)
-      .signers([asset, wallet1.payer])
-      .rpc()
-      );
-    /**
     {
+      const txSign = await errorHandling(
+        program.methods.createTicketV1(createAssetArgs)
+        .accountsPartial(accounts)
+        .signers([asset, wallet1.payer])
+        .rpc()
+        );
       // TODO: https://solana.stackexchange.com/questions/10222/how-can-i-check-the-transaction-logs-in-anchor-test
       const latestBlockHash = await connection.getLatestBlockhash();
       await connection.confirmTransaction(
         {
           blockhash: latestBlockHash.blockhash,
           lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: createTxSign,
+          signature: txSign,
         },
         "confirmed"
       );
-      const createTx = await connection.getTransaction(createTxSign, {
-        commitment: 'confirmed',
-      });
-      console.log("createTx:", createTx);
+      // const createTx = await connection.getTransaction(txSign, {
+      //   commitment: 'confirmed',
+      // });
+      // console.log("createTx:", createTx);
     }
-    */
 
     ////////////////////////////////////////////////////////////////////////////
     /// Assert
@@ -361,18 +359,30 @@ describe("utils", () => {
       ticketAsset: asset.publicKey,
       newOwner: wallet2.publicKey,
       lifeHelperPda: life_helper_pda,
-      system_program: SystemProgram.programId,
-      mpl_core_program: MPL_CORE_PROGRAM_ID
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
     };
 
     ////////////////////////////////////////////////////////////////////////////
     /// Act
-    await errorHandling(
-      program.methods.transferTicketV1({})
-      .accountsPartial(transferAccounts)
-      .signers([wallet1.payer])
-      .rpc()
-    );
+    {
+      const txSign = await errorHandling(
+        program.methods.transferTicketV1({})
+        .accountsPartial(transferAccounts)
+        .signers([wallet1.payer])
+        .rpc()
+      );
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: txSign,
+        },
+        "confirmed"
+      );
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     /// Assert
@@ -390,8 +400,8 @@ describe("utils", () => {
       ticketAsset: asset.publicKey,
       newOwner: wallet1.publicKey,
       lifeHelperPda: life_helper_pda,
-      system_program: SystemProgram.programId,
-      mpl_core_program: MPL_CORE_PROGRAM_ID
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -401,6 +411,189 @@ describe("utils", () => {
         program.methods.transferTicketV1({})
         .accountsPartial(transferAccounts2)
         .signers([wallet2])
+        .rpc()
+      );
+      expect(errorHappened).to.be.true;
+    }
+  });
+
+  it("should create MTL Core using V1 and transfer with the limit up to 2 times", async () => {
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    let asset = Keypair.generate();
+    const [life_helper_pda, life_helper_seed] = PublicKey.findProgramAddressSync(
+      [
+        anchor.utils.bytes.utf8.encode('mpl-core'),
+        asset.publicKey.toBuffer(),
+      ],
+      lifeHelperProg.programId
+    )
+    let createAssetArgs = {
+      name: 'My Asset',
+      uri: 'https://example.com/my-asset.json',
+      transferLimit: 2,
+    };
+    const accounts = {
+      asset: asset.publicKey,
+      collection: null,
+      authority: null,
+      payer: wallet1.publicKey,
+      owner: null,
+      updateAuthority: null,
+      lifeHelperPda: life_helper_pda,
+      lifeHelperProgram: lifeHelperProg.programId,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act
+    {
+      console.log("createTicketV1 - 1");
+      const txSign = await errorHandling(
+        program.methods.createTicketV1(createAssetArgs)
+        .accountsPartial(accounts)
+        .signers([asset, wallet1.payer])
+        .rpc()
+        );
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: txSign,
+        },
+        "confirmed"
+      );
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const createTx = await connection.getTransaction(txSign, {
+        commitment: 'confirmed',
+      });
+      console.log("createTx:", createTx);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    /// Assert
+    {
+      const assetData = await fetchAsset(umi, asset.publicKey.toString());
+      expect(assetData.name).to.equal(createAssetArgs.name);
+      expect(assetData.uri).to.equal(createAssetArgs.uri);
+      expect(assetData.owner).to.equal(wallet1.publicKey.toString());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    const transferAccounts = {
+      payer: wallet1.publicKey,
+      ticketAsset: asset.publicKey,
+      newOwner: wallet2.publicKey,
+      lifeHelperPda: life_helper_pda,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act
+    {
+      console.log("transferTicketV1 - 2");
+      const txSign = await errorHandling(
+        program.methods.transferTicketV1({})
+        .accountsPartial(transferAccounts)
+        .signers([wallet1.payer])
+        .rpc()
+      );
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: txSign,
+        },
+        "confirmed"
+      );
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const createTx = await connection.getTransaction(txSign, {
+        commitment: 'confirmed',
+      });
+      console.log("createTx:", createTx);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Assert
+    {
+      const assetData = await fetchAsset(umi, asset.publicKey.toString());
+      expect(assetData.name).to.equal(createAssetArgs.name);
+      expect(assetData.uri).to.equal(createAssetArgs.uri);
+      expect(assetData.owner).to.equal(wallet2.publicKey.toString());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    const transferAccounts2 = {
+      payer: wallet2.publicKey,
+      ticketAsset: asset.publicKey,
+      newOwner: wallet1.publicKey,
+      lifeHelperPda: life_helper_pda,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act
+    {
+      console.log("transferTicketV1 - 3");
+      const txSign = await errorHandling(
+        program.methods.transferTicketV1({})
+        .accountsPartial(transferAccounts2)
+        .signers([wallet2])
+        .rpc()
+      );
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: txSign,
+        },
+        "confirmed"
+      );
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const createTx = await connection.getTransaction(txSign, {
+        commitment: 'confirmed',
+      });
+      console.log("createTx:", createTx);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Assert
+    {
+      const assetData = await fetchAsset(umi, asset.publicKey.toString());
+      expect(assetData.name).to.equal(createAssetArgs.name);
+      expect(assetData.uri).to.equal(createAssetArgs.uri);
+      expect(assetData.owner).to.equal(wallet1.publicKey.toString());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Arrange
+    const transferAccounts3 = {
+      payer: wallet1.publicKey,
+      ticketAsset: asset.publicKey,
+      newOwner: wallet2.publicKey,
+      lifeHelperPda: life_helper_pda,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Act & Assert
+    {
+      console.log("transferTicketV1 - 4");
+      const errorHappened = await expectError(
+        program.methods.transferTicketV1({})
+        .accountsPartial(transferAccounts3)
+        .signers([wallet1.payer])
         .rpc()
       );
       expect(errorHappened).to.be.true;

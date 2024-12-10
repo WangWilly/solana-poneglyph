@@ -29,7 +29,11 @@ pub struct Accounts4Init<'info> {
     pub signer: Signer<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
-    #[account(init, payer = payer, space = Validation::INIT_SPACE, seeds = [b"mpl-core"], bump)]
+
+    /// CHECK: this account will not be checked
+    pub asset: UncheckedAccount<'info>,
+
+    #[account(init, payer = payer, space = Validation::INIT_SPACE, seeds = [b"mpl-core", asset.key().as_ref()], bump)]
     pub oracle_account: Account<'info, Validation>,
     pub system_program: Program<'info, System>,
 }
