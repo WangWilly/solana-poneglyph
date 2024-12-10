@@ -84,7 +84,7 @@ Reading list:
 
 <!-- TODO: Flashbots? -->
 
-### Method: Front-running
+### Method 🤖: Front-running
 
 [Reference](https://www.coingecko.com/learn/what-is-mev-maximal-extractable-value-crypto)
 
@@ -97,7 +97,7 @@ A frontrunner – **often a sophisticated bot** –- detects a large buy order f
 
 The bot will then create a buy order for the same token, to get their transaction processed before the target transaction. They assign **a higher gas price** to their transaction, 😈 **incentivizing the validator to prioritize their buy order over the initially detected transaction**.
 
-### Method: Back-running
+### Method 🤖: Back-running
 
 [Reference](https://www.coingecko.com/learn/what-is-mev-maximal-extractable-value-crypto)
 
@@ -107,7 +107,7 @@ The bot will then create a buy order for the same token, to get their transactio
 
 It is accomplished by assigning **a lower gas price** to the second trade to ensure that it is validated after the target transaction.
 
-### Method: Dex arbitrage
+### Method 🤖: Dex arbitrage
 
 [Reference](https://www.coindesk.com/learn/what-is-mev-aka-maximal-extractable-value)
 
@@ -115,7 +115,7 @@ Tokens will often have **different prices on decentralized exchanges** due to va
 
 <img src="./dex-mev.png" alt="dex-mev" width="400"/>
 
-### Tools: Flash loans
+### Tools 🎸: Flash loans
 
 [Reference](https://chain.link/education-hub/flash-loans)
 
@@ -129,7 +129,7 @@ Flash loans are primarily used for:
 <!-- TODO: - 🤔 Collateral Swaps: Users can swap collateral between different DeFi platforms without needing to unwind their positions manually. -->
 <!-- TODO: - Debt Refinancing: Borrowers can use flash loans to refinance their debts by switching to platforms offering better interest rates or terms. -->
 
-### Tools: Liquidation
+### Tools 🎸: Liquidation
 
 Liquidation in DeFi refers to the process of selling off **a borrower’s collateral** when its value falls **below a required threshold relative to their debt**. This mechanism is crucial for maintaining the solvency of DeFi platforms and ensuring that lenders are repaid.
 
@@ -141,14 +141,14 @@ Risks:
 - Market Volatility: Rapid price changes can lead to unexpected liquidations, **potentially resulting in losses for borrowers**.
 - Liquidation Penalties: Borrowers may face penalties such as fees or reduced collateral value when their assets are liquidated.
 
-### Tools: 📌 Undercollateralized Loans
+### Tools 🎸: 📌 Undercollateralized Loans
 
 Undercollateralized loans allow borrowers to access funds by providing collateral that is less than the loan’s value. This contrasts with overcollateralized loans, where borrowers must deposit more collateral than the loan amount.
 
 - These loans are inherently riskier for lenders because **the collateral does not fully cover the loan amount**.
 - Despite their risks, undercollateralized loans have **gained traction in DeFi** through protocols like **Maple Finance** and **TrueFi**, which use innovative methods to **assess borrower creditworthiness** without traditional credit scores.
 
-### Method: Flash Loans in Liquidations
+### Method 🤖: Flash Loans in Liquidations
 
 Flash loans provide liquidators with immediate access to large amounts of capital without requiring upfront funds. This is crucial because liquidators need sufficient capital to repay the borrower’s debt and seize their collateral.
 
