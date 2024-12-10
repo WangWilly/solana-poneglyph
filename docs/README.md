@@ -19,12 +19,12 @@ Reading list:
     - [x] (Simple implementation) https://github.com/thirdweb-example/dex-contracts/blob/main/contracts/DEX.sol
     - [x] https://github.com/Uniswap/v1-contracts/blob/master/contracts/uniswap_exchange.vy
     - [ ] https://github.com/Aboudoc/Constant-Product-AMM/tree/main
-![CFMM change](./cfmmChange.png)
+<img src="./cfmmChange.png" alt="CFMM change" width="400"/>
 - [x] https://www.coingecko.com/learn/what-is-concentrated-liquidity
     - [x] Impermanent loss: https://medium.com/@pintail/uniswap-a-good-deal-for-liquidity-providers-104c0b6816f2
     - [x] [What is this price range imply in the concentrated liquidity in V3 ?](https://www.reddit.com/r/UniSwap/comments/mdicov/what_is_this_price_range_imply_in_the/)
     - https://blog.kyberswap.com/choosing-the-best-range-to-maximize-lp-returns-1-2/
-![uniswap-v3-tick](uniswap-v3-tick.png)
+<img src="./uniswap-v3-tick.png" alt="Uniswap V3 tick" width="400"/>
 - [ ] https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159
     - [ ] https://www.blocktempo.com/constant-function-market-makers-defi/
     - [ ] https://faisalkhan.com/knowledge-center/payments-wiki/f/formulas-for-automated-market-makers-amms/
@@ -40,7 +40,7 @@ Reading list:
     
 The LT trading condition links **the state of the pool** before and after a **trade** is executed. **It determines the relative prices between the assets by their quantities in the pool.** (➡️ If a LP initiates a pool with 1 A and 100 B, the price of A is 100 B. "dB/dA = 100" in this case. In real world, the price of A is more than 100 B since **there is a slipage**.)
 
-![level curve](level-curve.png)
+<img src="./level-curve.png" alt="level curve" width="400"/>
 
 [Reference](https://faisalkhan.com/knowledge-center/payments-wiki/f/formulas-for-automated-market-makers-amms/)
 
@@ -109,7 +109,7 @@ It is accomplished by assigning **a lower gas price** to the second trade to ens
 
 Tokens will often have **different prices on decentralized exchanges** due to varying demand. When there’s a significant price difference across one exchange to another, MEV bots will buy lower-priced tokens to sell them on another exchange at a higher value. (Benefit: token prices across exchanges become more aligned.)
 
-![dev-mev](dex-mev.png)
+<img src="./dex-mev.png" alt="dex-mev" width="400"/>
 
 ### Tools: Flash loans
 
