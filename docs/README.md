@@ -19,12 +19,16 @@ Reading list:
     - [x] (Simple implementation) https://github.com/thirdweb-example/dex-contracts/blob/main/contracts/DEX.sol
     - [x] https://github.com/Uniswap/v1-contracts/blob/master/contracts/uniswap_exchange.vy
     - [ ] https://github.com/Aboudoc/Constant-Product-AMM/tree/main
+
 <img src="./cfmmChange.png" alt="CFMM change" width="400"/>
+
 - [x] https://www.coingecko.com/learn/what-is-concentrated-liquidity
     - [x] Impermanent loss: https://medium.com/@pintail/uniswap-a-good-deal-for-liquidity-providers-104c0b6816f2
     - [x] [What is this price range imply in the concentrated liquidity in V3 ?](https://www.reddit.com/r/UniSwap/comments/mdicov/what_is_this_price_range_imply_in_the/)
     - https://blog.kyberswap.com/choosing-the-best-range-to-maximize-lp-returns-1-2/
+
 <img src="./uniswap-v3-tick.png" alt="Uniswap V3 tick" width="400"/>
+
 - [ ] https://medium.com/bollinger-investment-group/constant-function-market-makers-defis-zero-to-one-innovation-968f77022159
     - [ ] https://www.blocktempo.com/constant-function-market-makers-defi/
     - [ ] https://faisalkhan.com/knowledge-center/payments-wiki/f/formulas-for-automated-market-makers-amms/
