@@ -4,7 +4,7 @@
     - https://www.perplexity.ai/search/c9a0ca25-89d4-46d4-9bc4-a0d97d1d449d
 - https://medium.com/coinmonks/implementing-proof-of-stake-e26fa5fb8716
 
-# Solana Blockchain (Anchor, Metaplex)
+# CH1. Solana Blockchain (Anchor, Metaplex)
 
 - [Solana deploying](https://solana.com/docs/programs/deploying)
 - https://solana.com/docs/programs/anchor/program-structure
@@ -98,7 +98,7 @@ https://developers.metaplex.com/core/external-plugins/app-data
 - https://medium.com/metaplex/all-you-need-to-know-about-the-new-oracle-plugin-e669fc266cb0
 
 
-# Decentralized exchange (DEX)
+# CH2. Decentralized exchange (DEX)
 
 ## Constant function market maker (CFMM)
 
@@ -280,11 +280,11 @@ Risks
 > [jonsnowwithanafro](https://www.reddit.com/r/ethereum/comments/198bds1/comment/ki6svs2/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button): "... But I saw one pool that went from 3.5% APY on 3,800 ETH to 7.65% APY from good MEV."
 >
 
-## dApp cases
+## Decentralized Application (DAPP) Cases
 
-### [pump.fun](https://pump.fun/board)
+### pump.fun ([link](https://pump.fun/board))
 
-https://decrypt.co/resources/what-is-pump-fun-the-solana-meme-coin-factory
-https://bitcoinist.com/solana-based-platform-pump-fun-declared-illegal-by-uk-regulator/
-https://www.reddit.com/r/solana/comments/1fiavug/is_pumpfun_played_out/
-https://raydium.io/swap/
+- https://decrypt.co/resources/what-is-pump-fun-the-solana-meme-coin-factory
+- https://bitcoinist.com/solana-based-platform-pump-fun-declared-illegal-by-uk-regulator/
+- https://www.reddit.com/r/solana/comments/1fiavug/is_pumpfun_played_out/
+- https://raydium.io/swap/

@@ -1,6 +1,6 @@
 # Poneglyph
 
-Toy project to learn how to use the Solana Anchor framework.
+Toy project to learn how to use the Solana Anchor framework. ([my notes 🐒](./docs/README.md))
 - https://www.anchor-lang.com/docs/installation
 - https://solana.com/docs/programs/anchor/cpi
 - https://book.anchor-lang.com/
