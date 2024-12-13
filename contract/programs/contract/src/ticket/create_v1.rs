@@ -101,7 +101,7 @@ pub fn create_ticket_v1_impl(
     let payer_seed = ctx.accounts.payer.to_account_info().key();
     let asset_seed = ctx.accounts.asset.to_account_info().key();
     let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
-    let signer_seeds: &[&[&[u8]]] = &[&[payer_seed.as_ref(), asset_seed.as_ref(), b"mpl-core", bump_seed.as_ref()]];
+    let signer_seeds: &[&[&[u8]]] = &[&[payer_seed.as_ref(), payer_seed.as_ref(), asset_seed.as_ref(), b"mpl-core", bump_seed.as_ref()]];
     let life_helper_ctx =
         CpiContext::new(life_helper_program, life_helper_cpi_accounts).with_signer(signer_seeds);
     life_helper::cpi::initialize(
@@ -121,6 +121,7 @@ pub fn create_ticket_v1_impl(
             HookableLifecycleEvent::Transfer,
             ExternalCheckResult { flags: 4 }, // CAN_REJECT
         )],
+        // https://github.com/metaplex-foundation/mpl-core/blob/7d82981e9be90592579055cfc8f4006aeeff28c3/programs/mpl-core/src/plugins/external_plugin_adapters.rs#L467
         base_address_config: Some(ExtraAccount::PreconfiguredAsset {
             // TODO: unused parameters?
             is_signer: false,
