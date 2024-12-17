@@ -159,7 +159,7 @@ https://developers.metaplex.com/core/helpers
 
 ```bash
 ./scripts/misc/set-metaplex-core.sh
-./scripts/test-contract.sh
+./scripts/contract-test.sh
 ```
 
 ### Backend integration tests (local)
