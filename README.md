@@ -153,11 +153,27 @@ anchor build
 
 ## Test
 
+### Contract unit tests
+
 https://developers.metaplex.com/core/helpers
 
 ```bash
 ./scripts/misc/set-metaplex-core.sh
 ./scripts/test-contract.sh
+```
+
+### Backend integration tests (local)
+
+On one terminal:
+```bash
+./scripts/misc/set-metaplex-core.sh
+./scripts/misc/solana-local-dev-validator.sh
+```
+
+On another terminal:
+```bash
+./scripts/misc/new-sol-wallet.sh
+./scripts/be-serve.sh dev
 ```
 
 ## Milestones
