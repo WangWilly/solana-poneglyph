@@ -657,6 +657,8 @@ dependencies = [
  "contract",
  "diesel",
  "envy",
+ "life_helper",
+ "mpl-core",
  "reqwest 0.10.10",
  "serde",
  "serde_json",

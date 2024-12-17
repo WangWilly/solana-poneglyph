@@ -1,10 +1,11 @@
 use axum::{extract::State, Json};
 
+use crate::pkgs::ctx::Ctx;
 use super::state::CtrlState;
+use crate::pkgs::common::ApiResult;
+use super::dtos::create_v1::{CreateTicketV1Req, CreateTicketV1Resp};
 
 use crate::info;
-use crate::pkgs::common::ApiResult;
-use crate::pkgs::ctx::Ctx;
 
 // https://solana.stackexchange.com/questions/14274/how-can-i-use-declare-program-for-client-side-rust
 // https://github.com/coral-xyz/anchor/tree/master/client
@@ -21,9 +22,8 @@ use super::pkgs::solana_program_public_key::{
     get_life_helper_id, get_mpl_core_id, get_ticket_contract_id,
 };
 
-use super::dtos::create_v1::{CreateTicketV1Req, CreateTicketV1Resp};
-
 ////////////////////////////////////////////////////////////////////////////////
+// TODO: https://solana.stackexchange.com/questions/5275/error-message-a-seeds-constraint-was-violated
 
 #[axum::debug_handler]
 pub async fn create_ticket_v1(
