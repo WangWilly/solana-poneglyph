@@ -6,9 +6,10 @@ use serde::Deserialize;
 use tokio::signal;
 
 mod controllers;
-use controllers::ticket::ctrl::get_system_payer;
 use controllers::ticket::ctrl::new as ticket_ctrl;
 use controllers::ticket::pkgs::solana_client::get_solana_client;
+use controllers::ticket::state::get_system_payer;
+use controllers::ticket::state::CtrlState as TicketCtrlState;
 
 mod pkgs;
 // use pkgs::db_helper::get_connection_pool;
@@ -80,7 +81,11 @@ async fn main() {
     ////////////////////////////////////////////////////////////////////////////
 
     info!("Creating routers...");
-    let ticket_router = ticket_ctrl(solana_client, ticket_system_payer);
+    let ticket_state = TicketCtrlState {
+        solana_client: solana_client,
+        system_payer: ticket_system_payer,
+    };
+    let ticket_router = ticket_ctrl(ticket_state);
     info!("Routers created.");
 
     ////////////////////////////////////////////////////////////////////////////
