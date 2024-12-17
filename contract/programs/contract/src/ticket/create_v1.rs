@@ -1,17 +1,19 @@
-use std::str::FromStr;
-
 use anchor_lang::prelude::*;
 
 use mpl_core::{
-    accounts::BaseCollectionV1, instructions::CreateV2CpiBuilder, types::{
+    accounts::BaseCollectionV1,
+    instructions::CreateV2CpiBuilder,
+    types::{
         ExternalCheckResult, ExternalPluginAdapterInitInfo, ExtraAccount, HookableLifecycleEvent,
         OracleInitInfo, ValidationResultsOffset,
-    }, ID as MPL_CORE_ID
+    },
+    ID as MPL_CORE_ID,
 };
 
 use life_helper::cpi::accounts::Accounts4Init as LifeHelperAccounts4Init;
 use life_helper::ctbu::init::Args4Init as LifeHelperArgs4Init;
 use life_helper::program::LifeHelper;
+use life_helper::ID as LIFE_HELPER_ID;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -47,9 +49,9 @@ pub struct Accounts4CreateTicketV1<'info> {
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
 pub struct Args4CreateTicketV1 {
-    name: String,
-    uri: String,
-    transfer_limit: u16,
+    pub name: String,
+    pub uri: String,
+    pub transfer_limit: u16,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -101,7 +103,12 @@ pub fn create_ticket_v1_impl(
     let payer_seed = ctx.accounts.payer.to_account_info().key();
     let asset_seed = ctx.accounts.asset.to_account_info().key();
     let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
-    let signer_seeds: &[&[&[u8]]] = &[&[payer_seed.as_ref(), payer_seed.as_ref(), asset_seed.as_ref(), b"mpl-core", bump_seed.as_ref()]];
+    let signer_seeds: &[&[&[u8]]] = &[&[
+        payer_seed.as_ref(),
+        asset_seed.as_ref(),
+        b"mpl-core",
+        bump_seed.as_ref(),
+    ]];
     let life_helper_ctx =
         CpiContext::new(life_helper_program, life_helper_cpi_accounts).with_signer(signer_seeds);
     life_helper::cpi::initialize(
@@ -113,7 +120,8 @@ pub fn create_ticket_v1_impl(
 
     // https://solana.com/docs/core/pda
     // https://github.com/metaplex-foundation/mpl-core/blob/main/clients/js/src/plugins/lifecycleChecks.ts#L42
-    let oracle_plugin = Pubkey::from_str("6qjMzebX6DBJMbrNPk2UejZSkF7i8H5Nc5gbQAgKw7ay").unwrap();
+    // let oracle_plugin = Pubkey::from_str("6qjMzebX6DBJMbrNPk2UejZSkF7i8H5Nc5gbQAgKw7ay").unwrap();
+    let oracle_plugin = LIFE_HELPER_ID;
     external_plugin_adapters.push(ExternalPluginAdapterInitInfo::Oracle(OracleInitInfo {
         base_address: oracle_plugin,
         init_plugin_authority: None,

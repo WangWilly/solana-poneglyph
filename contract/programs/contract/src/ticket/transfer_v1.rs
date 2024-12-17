@@ -56,7 +56,13 @@ pub fn transfer_ticket_v1_impl(
     let payer_seed = ctx.accounts.payer.to_account_info().key();
     let asset_seed = ctx.accounts.ticket_asset.to_account_info().key();
     let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
-    let signer_seeds: &[&[&[u8]]] = &[&[payer_seed.as_ref(), payer_seed.as_ref(), asset_seed.as_ref(), b"mpl-core", bump_seed.as_ref()]];
+    let signer_seeds: &[&[&[u8]]] = &[&[
+        payer_seed.as_ref(),
+        payer_seed.as_ref(),
+        asset_seed.as_ref(),
+        b"mpl-core",
+        bump_seed.as_ref(),
+    ]];
     let life_helper_ctx =
         CpiContext::new(life_helper_program, life_helper_cpi_accounts).with_signer(signer_seeds);
     life_helper::cpi::transfer(life_helper_ctx)?;

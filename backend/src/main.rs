@@ -5,7 +5,10 @@ use serde::Deserialize;
 
 use tokio::signal;
 
-// mod controllers;
+mod controllers;
+use controllers::ticket::ctrl::get_system_payer;
+use controllers::ticket::ctrl::new as ticket_ctrl;
+use controllers::ticket::pkgs::solana_client::get_solana_client;
 
 mod pkgs;
 // use pkgs::db_helper::get_connection_pool;
@@ -71,15 +74,20 @@ async fn main() {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    let solana_client = get_solana_client();
+    let ticket_system_payer = get_system_payer();
+
     ////////////////////////////////////////////////////////////////////////////
 
     info!("Creating routers...");
+    let ticket_router = ticket_ctrl(solana_client, ticket_system_payer);
     info!("Routers created.");
 
     ////////////////////////////////////////////////////////////////////////////
 
     info!("Creating app...");
     let app = Router::new()
+        .merge(ticket_router)
         .fallback(handler_404)
         .layer(from_fn(ctx_constructor))
         .layer(

@@ -5,8 +5,8 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-contract = "ExAzZQ8rEFwiTHybeRwMGzGiheMm4TtsNwy5KwwH4cqd"
-life_helper = "6qjMzebX6DBJMbrNPk2UejZSkF7i8H5Nc5gbQAgKw7ay"
+contract = "B28UKH17RsMkqA9n3YbviRMny9yeiBdM7pzjT9LK1JZ"
+life_helper = "6wpG1R1Sc7hJf6ZzAzMuzuhSGCEdmuS6X7vgaBXPnqgc"
 
 [registry]
 url = "https://api.apr.dev"

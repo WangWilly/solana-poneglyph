@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 
-mod ticket;
+pub mod ticket;
 use ticket::{create::*, create_collection::*, create_v1::*, transfer::*, transfer_v1::*};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-declare_id!("ExAzZQ8rEFwiTHybeRwMGzGiheMm4TtsNwy5KwwH4cqd");
+declare_id!("B28UKH17RsMkqA9n3YbviRMny9yeiBdM7pzjT9LK1JZ");
 
 ////////////////////////////////////////////////////////////////////////////////
 
