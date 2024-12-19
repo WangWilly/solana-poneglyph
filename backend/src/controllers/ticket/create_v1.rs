@@ -1,3 +1,4 @@
+use std::sync::{Arc, Mutex};
 use axum::{extract::State, Json};
 
 use super::dtos::create_v1::{CreateTicketV1Req, CreateTicketV1Resp};
@@ -22,6 +23,11 @@ use super::pkgs::solana_program_public_key::{
     get_life_helper_id, get_mpl_core_id, get_ticket_contract_id,
 };
 
+use rand::RngCore;
+use rand::rngs::OsRng;
+use rustc_serialize::base64::{STANDARD, ToBase64, FromBase64};
+use crypto::aes::{self, KeySize};
+
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: https://solana.stackexchange.com/questions/5275/error-message-a-seeds-constraint-was-violated
 
@@ -44,13 +50,31 @@ pub async fn create_ticket_v1(
     let ticket_contract = get_ticket_contract_id();
     let mpl_core = get_mpl_core_id();
 
+    let mut gen = OsRng::default();
+    let mut nonce: Vec<u8> = vec![0; 16];
+    gen.fill_bytes(&mut nonce[..]);
+    let nonce_arc = Arc::new(Mutex::new(nonce));
+    let nonce_clone1 = Arc::clone(&nonce_arc);
+
+    let key = state.delegate_secret.from_base64().unwrap();
+    let encrypted_uri: Arc<Mutex<Vec<u8>>> = Arc::new(Mutex::new(vec![0; req.uri.len()]));
+    let encrypted_uri_clone1 = Arc::clone(&encrypted_uri);
+    tokio::task::spawn_blocking(move || {
+        let nonce1 = nonce_clone1.lock().unwrap();
+        let mut cipher = aes::ctr(KeySize::KeySize128, &key, &nonce1);
+        let mut encrypted_uri_lock = encrypted_uri_clone1.lock().unwrap();
+        cipher.process(req.uri.as_bytes(), &mut encrypted_uri_lock);
+    });
+
     ////////////////////////////////////////////////////////////////////////////
     // Resolve
     // https://docs.rs/axum/latest/axum/attr.debug_handler.html
     // https://users.rust-lang.org/t/future-cannot-be-sent-between-threads-safely-axum-scraper/92525
+    let encrypted_uri_clone2 = Arc::clone(&encrypted_uri);
     tokio::task::spawn_blocking(move || {
         let client = get_solana_client(state.system_payer.clone());
         let program = client.program(ticket_contract).unwrap();
+        let encrypted_uri_lock = encrypted_uri_clone2.lock().unwrap();
         let tx = program
             .request()
             .accounts(accounts::Accounts4CreateTicketV1 {
@@ -68,7 +92,7 @@ pub async fn create_ticket_v1(
             .args(instruction::CreateTicketV1 {
                 args: Args4CreateTicketV1 {
                     name: req.name,
-                    uri: req.uri,
+                    uri: encrypted_uri_lock.to_base64(STANDARD),
                     transfer_limit: req.transfer_limit,
                 },
             })
@@ -83,5 +107,11 @@ pub async fn create_ticket_v1(
 
     ////////////////////////////////////////////////////////////////////////////
     // Compose
-    Ok(Json(CreateTicketV1Resp {}))
+    let nonce_clone2 = Arc::clone(&nonce_arc);
+    let nonce_base64 = {
+        nonce_clone2.lock().unwrap().to_base64(STANDARD)
+    };
+    Ok(Json(CreateTicketV1Resp {
+        nonce: nonce_base64,
+    }))
 }
