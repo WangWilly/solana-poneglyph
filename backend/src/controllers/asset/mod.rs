@@ -6,4 +6,5 @@
 mod create_v1;
 pub mod ctrl;
 mod dtos;
+mod get_v1;
 pub mod state;

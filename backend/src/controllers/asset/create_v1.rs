@@ -11,6 +11,7 @@ use crate::info;
 use super::dtos::create_v1::CreateAssetV1Resp;
 
 ////////////////////////////////////////////////////////////////////////////////
+// TODO: https://stackoverflow.com/questions/477816/which-json-content-type-do-i-use
 
 #[axum::debug_handler]
 pub async fn create_asset_v1(
@@ -21,7 +22,9 @@ pub async fn create_asset_v1(
     info!("create_asset_v1 - {:?}", ctx);
 
     // https://stackoverflow.com/questions/30154541/how-do-i-concatenate-strings
-    tokio::fs::write(state.default_dest + "/" + &jpeg.name, jpeg.data).await.unwrap();
+    tokio::fs::write(state.default_dest + "/" + &jpeg.name, jpeg.data)
+        .await
+        .unwrap();
 
     Ok(Json(CreateAssetV1Resp {}))
 }

@@ -47,6 +47,7 @@ pub enum Error {
     AuthFailCtxNotInRequestExt,
     DbRecordNoResult { source: String, id: String },
     DbFail,
+    FileNotFound { source: String },
 
     ClientReqError { source: String },
 }
@@ -61,6 +62,7 @@ impl fmt::Display for Error {
             }
             Self::DbRecordNoResult { id, .. } => write!(f, "No record for id {id}"),
             Self::DbFail => write!(f, "Database error"),
+            Self::FileNotFound { source } => write!(f, "File not found: {source}"),
             Self::ClientReqError { source } => write!(f, "Client request error: {source}"),
         }
     }
@@ -80,7 +82,7 @@ impl IntoResponse for ApiError {
         println!("->> {:<12} - into_response - {self:?}", "ERROR");
 
         let status_code = match self.error {
-            Error::DbRecordNoResult { .. } => StatusCode::NOT_FOUND,
+            Error::DbRecordNoResult { .. } | Error::FileNotFound { .. } => StatusCode::NOT_FOUND,
             Error::AuthFailCtxNotInRequestExt => StatusCode::UNAUTHORIZED,
             Error::Generic { .. } | Error::LoginFail => StatusCode::FORBIDDEN,
             Error::ClientReqError { .. } | Error::DbFail => StatusCode::INTERNAL_SERVER_ERROR,

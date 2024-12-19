@@ -22,3 +22,4 @@ tower-http = { version = "0.6.2", features = ["trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["json", "ansi"] }
 uuid = { version = "1.11.0", features = ["v4", "fast-rng"] }
+tokio-util = "0.7.13"
