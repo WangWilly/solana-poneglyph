@@ -1,4 +1,7 @@
-use axum::{routing::{get, post}, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 use super::create_v1::create_ticket_v1;
 use super::get_v1::get_ticket_v1;

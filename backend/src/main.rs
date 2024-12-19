@@ -10,6 +10,9 @@ use controllers::ticket::ctrl::new as ticket_ctrl;
 use controllers::ticket::pkgs::solana_client::get_solana_client;
 use controllers::ticket::state::get_system_payer;
 use controllers::ticket::state::CtrlState as TicketCtrlState;
+use controllers::asset::ctrl::new as asset_ctrl;
+use controllers::asset::state::CtrlState as AssetCtrlState;
+use controllers::asset::state::get_default_dest;
 
 mod pkgs;
 // use pkgs::db_helper::get_connection_pool;
@@ -77,6 +80,7 @@ async fn main() {
 
     let solana_client = get_solana_client();
     let ticket_system_payer = get_system_payer();
+    let asset_default_dest = get_default_dest();
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -86,6 +90,10 @@ async fn main() {
         system_payer: ticket_system_payer,
     };
     let ticket_router = ticket_ctrl(ticket_state);
+    let asset_state = AssetCtrlState {
+        default_dest: asset_default_dest,
+    };
+    let asset_router = asset_ctrl(asset_state);
     info!("Routers created.");
 
     ////////////////////////////////////////////////////////////////////////////
@@ -93,6 +101,7 @@ async fn main() {
     info!("Creating app...");
     let app = Router::new()
         .merge(ticket_router)
+        .merge(asset_router)
         .fallback(handler_404)
         .layer(from_fn(ctx_constructor))
         .layer(

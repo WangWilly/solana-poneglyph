@@ -7,5 +7,6 @@ pub mod errors;
 pub mod logging;
 // pub mod models;
 // pub mod repos;
+pub mod body_parsers;
 pub mod schema;
 pub mod time;
