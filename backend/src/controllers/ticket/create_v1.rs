@@ -22,6 +22,13 @@ use super::pkgs::solana_program_public_key::{
     get_life_helper_id, get_mpl_core_id, get_ticket_contract_id,
 };
 
+use ring::aead::AES_256_GCM;
+use crate::pkgs::encrypt_utils::CounterNonceSequence;
+use ring::aead::SealingKey;
+use ring::aead::UnboundKey;
+use ring::aead::BoundKey;
+use ring::aead::Aad;
+
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: https://solana.stackexchange.com/questions/5275/error-message-a-seeds-constraint-was-violated
 
@@ -39,10 +46,18 @@ pub async fn create_ticket_v1(
     let life_helper = get_life_helper_id();
     let (pda_address, _bump) =
         Pubkey::find_program_address(&[b"mpl-core", &asset.pubkey().to_bytes()], &life_helper);
-    info!("asset: {:?}", asset.pubkey());
-    info!("pda_address: {:?}", pda_address);
+    let asset_key = asset.pubkey().to_string();
+    // info!("pda_address: {:?}", pda_address);
     let ticket_contract = get_ticket_contract_id();
     let mpl_core = get_mpl_core_id();
+
+    let key_bytes = hex::decode(state.delegate_secret).unwrap();
+    let unbound_key = UnboundKey::new(&AES_256_GCM, &key_bytes).unwrap();
+    let nonce_sequence = CounterNonceSequence(1);
+    let mut sealing_key = SealingKey::new(unbound_key, nonce_sequence);
+    let associated_data = Aad::empty();
+    let mut encrypted_uri_data = req.uri.as_bytes().to_vec(); // Convert to a mutable vector
+    let aes_gcm_tag = sealing_key.seal_in_place_separate_tag(associated_data, &mut encrypted_uri_data).unwrap();
 
     ////////////////////////////////////////////////////////////////////////////
     // Resolve
@@ -68,7 +83,7 @@ pub async fn create_ticket_v1(
             .args(instruction::CreateTicketV1 {
                 args: Args4CreateTicketV1 {
                     name: req.name,
-                    uri: req.uri,
+                    uri: hex::encode(encrypted_uri_data.to_vec()),
                     transfer_limit: req.transfer_limit,
                 },
             })
@@ -83,5 +98,8 @@ pub async fn create_ticket_v1(
 
     ////////////////////////////////////////////////////////////////////////////
     // Compose
-    Ok(Json(CreateTicketV1Resp {}))
+    Ok(Json(CreateTicketV1Resp {
+        asset_key: asset_key,
+        aes_gcm_tag: hex::encode(aes_gcm_tag),
+    }))
 }

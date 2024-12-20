@@ -10,4 +10,7 @@ pub struct CreateTicketV1Req {
 }
 
 #[derive(Serialize)]
-pub struct CreateTicketV1Resp {}
+pub struct CreateTicketV1Resp {
+    pub asset_key: String,
+    pub aes_gcm_tag: String,
+}
