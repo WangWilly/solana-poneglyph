@@ -148,7 +148,7 @@ anchor --version
 
 ```bash
 # Build the project
-anchor build
+./scripts/contract-build.sh
 ```
 
 ## Test
@@ -176,6 +176,58 @@ On another terminal:
 ./scripts/be-serve.sh dev
 ```
 
+#### API
+
+❶ Create a ticket:
+```bash
+curl --location 'localhost:3000/api/ticket/v1' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "test",
+    "uri": "uri_test",
+    "transfer_limit": 10
+}'
+```
+
+Response:
+```json
+{
+    "asset_key": "xLZjdGZB3SdtUUYg4rKoBrVb9w7yFuKh8FNEBTzgCVB",
+    "aes_gcm_tag": "21WlQQsekVvi0XSYH3iX8g=="
+}
+```
+
+❷ Get the ticket:
+```bash
+curl --location 'localhost:3000/api/ticket/v1/xLZjdGZB3SdtUUYg4rKoBrVb9w7yFuKh8FNEBTzgCVB?aes_gcm_tag=21WlQQsekVvi0XSYH3iX8g%3D%3D'
+```
+
+Response:
+```json
+{
+    "name": "test",
+    "owner": "79zjn9Pe3empMZZet5FHnNKaVjrLkCN9i2HV7u4THsVq",
+    "uri": "uri_test2"
+}
+```
+
+❸ Create an asset for the ticket:
+```bash
+curl --location 'localhost:3000/api/asset/v1' \
+--header 'Content-Type: image/jpeg' \
+--data-binary '~/Downloads/ED5FA0FF-DD05-48DE-AE0A-0701FB189A97.JPG'
+```
+
+Response:
+```json
+{}
+```
+
+❹ Get the asset:
+```bash
+curl --location 'localhost:3000/api/asset/v1/image.jpg'
+```
+
 ## Milestones
 
 - [x] Initialize the project.
@@ -186,16 +238,16 @@ On another terminal:
     - https://developers.metaplex.com/core/guides/anchor/how-to-create-a-core-nft-asset-with-anchor
     - https://developers.metaplex.com/core/getting-started/rust
 - [ ] Batch create MPL Core Accounts.
-- [ ] Create a MPL Core Account with a plugin.
+- [x] Create a MPL Core Account with a plugin.
 - [ ] Create a MPL Core Account with a plugin and a collection.
     - If you are transferring an Asset which has a collection you will need to pass the collection address in.
     - https://developers.metaplex.com/core/collections
 - [x] Transfer a MPL Core Account.
     - https://developers.metaplex.com/core/transfer
     - https://github.com/solana-developers/program-examples/tree/main/tokens/transfer-tokens/anchor/programs/transfer-tokens
-- [ ] Set the price of a MPL Core Account.
+- [x] Set the price of a MPL Core Account.
 - [ ] Set the rules of marketing a MPL Core Account.
-- [ ] Encrypt the data of a MPL Core Account with a secret.
+- [x] Encrypt the data of a MPL Core Account with a secret.
 
 ## Common Commands
 
