@@ -29,6 +29,8 @@ use ring::aead::UnboundKey;
 use ring::aead::BoundKey;
 use ring::aead::Aad;
 
+use base64::{engine::general_purpose, Engine as _};
+
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: https://solana.stackexchange.com/questions/5275/error-message-a-seeds-constraint-was-violated
 
@@ -51,7 +53,7 @@ pub async fn create_ticket_v1(
     let ticket_contract = get_ticket_contract_id();
     let mpl_core = get_mpl_core_id();
 
-    let key_bytes = hex::decode(state.delegate_secret).unwrap();
+    let key_bytes = general_purpose::STANDARD.decode(state.delegate_secret).unwrap();
     let unbound_key = UnboundKey::new(&AES_256_GCM, &key_bytes).unwrap();
     let nonce_sequence = CounterNonceSequence(1);
     let mut sealing_key = SealingKey::new(unbound_key, nonce_sequence);
@@ -83,7 +85,7 @@ pub async fn create_ticket_v1(
             .args(instruction::CreateTicketV1 {
                 args: Args4CreateTicketV1 {
                     name: req.name,
-                    uri: hex::encode(encrypted_uri_data.to_vec()),
+                    uri: general_purpose::STANDARD.encode(&encrypted_uri_data),
                     transfer_limit: req.transfer_limit,
                 },
             })
@@ -100,6 +102,6 @@ pub async fn create_ticket_v1(
     // Compose
     Ok(Json(CreateTicketV1Resp {
         asset_key: asset_key,
-        aes_gcm_tag: hex::encode(aes_gcm_tag),
+        aes_gcm_tag: general_purpose::STANDARD.encode(aes_gcm_tag),
     }))
 }

@@ -32,7 +32,7 @@ pub fn get_system_payer() -> WrappedKeypair {
 
 pub fn get_delegate_secret() -> String {
     let delegate_secret =
-        std::env::var("DELEGATE_SECRET").unwrap_or("e15eedf155f13491fb5d77121006d5d980f6c05abb03ca89c684d70f915bac11".to_string());
+        std::env::var("DELEGATE_SECRET").unwrap_or("4V7t8VXxNJH7XXcSEAbV2YD2wFq7A8qJxoTXD5FbrBE=".to_string());
 
     delegate_secret
 }

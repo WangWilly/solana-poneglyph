@@ -22,6 +22,8 @@ use ring::aead::UnboundKey;
 use ring::aead::BoundKey;
 use ring::aead::OpeningKey;
 
+use base64::{engine::general_purpose, Engine as _};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #[axum::debug_handler]
@@ -39,7 +41,7 @@ pub async fn get_ticket_v1(
     let (_pda_address, _bump) =
         Pubkey::find_program_address(&[b"mpl-core", &ticket_id.to_bytes()], &get_life_helper_id());
 
-    let key_bytes = hex::decode(state.delegate_secret).unwrap();
+    let key_bytes = general_purpose::STANDARD.decode(state.delegate_secret).unwrap();
     let unbound_key = UnboundKey::new(&AES_256_GCM, &key_bytes).unwrap();
     let nonce_sequence = CounterNonceSequence(1);
     let mut opening_key = OpeningKey::new(unbound_key, nonce_sequence);
@@ -58,8 +60,8 @@ pub async fn get_ticket_v1(
     // let _life_helper_oracle_data  = state.solana_client.get_account_data(&pda_address).unwrap();
     // let _life_helper_oracle = Validation::try_deserialize(_life_helper_oracle_data);
 
-    let encrypted_uri_data = hex::decode(ticket.base.uri).unwrap();
-    let aes_gcm_tag = hex::decode(query.aes_gcm_tag).unwrap();
+    let encrypted_uri_data = general_purpose::STANDARD.decode(ticket.base.uri).unwrap();
+    let aes_gcm_tag = general_purpose::STANDARD.decode(query.aes_gcm_tag).unwrap();
     let mut encrypted_uri_data_with_tag = [encrypted_uri_data, aes_gcm_tag].concat();
     let decrypted_data = opening_key.open_in_place(associated_data, &mut encrypted_uri_data_with_tag).unwrap();
 

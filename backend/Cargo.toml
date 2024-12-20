@@ -25,3 +25,4 @@ uuid = { version = "1.11.0", features = ["v4", "fast-rng"] }
 tokio-util = "0.7.13"
 ring = "0.17.8"
 hex = "0.4.3"
+base64 = "0.22.1"
