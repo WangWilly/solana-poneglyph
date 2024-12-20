@@ -11,7 +11,7 @@ use controllers::asset::state::get_default_dest;
 use controllers::asset::state::CtrlState as AssetCtrlState;
 use controllers::ticket::ctrl::new as ticket_ctrl;
 use controllers::ticket::pkgs::solana_client::get_solana_client;
-use controllers::ticket::state::{get_system_payer, get_delegate_secret};
+use controllers::ticket::state::get_system_payer;
 use controllers::ticket::state::CtrlState as TicketCtrlState;
 
 mod pkgs;
@@ -88,7 +88,6 @@ async fn main() {
     let ticket_state = TicketCtrlState {
         solana_client: solana_client,
         system_payer: ticket_system_payer,
-        delegate_secret: get_delegate_secret(),
     };
     let ticket_router = ticket_ctrl(ticket_state);
     let asset_state = AssetCtrlState {

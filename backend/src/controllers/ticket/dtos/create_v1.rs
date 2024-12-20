@@ -10,6 +10,4 @@ pub struct CreateTicketV1Req {
 }
 
 #[derive(Serialize)]
-pub struct CreateTicketV1Resp {
-    pub nonce: String
-}
+pub struct CreateTicketV1Resp {}
