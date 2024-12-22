@@ -1,0 +1,275 @@
+{
+  "address": "6wpG1R1Sc7hJf6ZzAzMuzuhSGCEdmuS6X7vgaBXPnqgc",
+  "metadata": {
+    "name": "life_helper",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset"
+        },
+        {
+          "name": "oracle_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  112,
+                  108,
+                  45,
+                  99,
+                  111,
+                  114,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "Args4Init"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "transfer",
+      "discriminator": [
+        163,
+        52,
+        200,
+        231,
+        140,
+        3,
+        69,
+        186
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "new_owner",
+          "writable": true
+        },
+        {
+          "name": "asset"
+        },
+        {
+          "name": "oracle_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  112,
+                  108,
+                  45,
+                  99,
+                  111,
+                  114,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Validation",
+      "discriminator": [
+        130,
+        241,
+        151,
+        113,
+        169,
+        195,
+        219,
+        148
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TransferLimitExceeded",
+      "msg": "Transfer limit exceeded"
+    }
+  ],
+  "types": [
+    {
+      "name": "Args4Init",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "transfer_limit",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ExternalValidationResult",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Pass"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleValidation",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "V1",
+            "fields": [
+              {
+                "name": "create",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "transfer",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "burn",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "update",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Validation",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "validation",
+            "type": {
+              "defined": {
+                "name": "OracleValidation"
+              }
+            }
+          },
+          {
+            "name": "transfer_limit",
+            "type": "u16"
+          },
+          {
+            "name": "curr_transfer",
+            "type": "u16"
+          },
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "current",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

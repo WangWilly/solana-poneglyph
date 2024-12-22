@@ -238,6 +238,9 @@ curl --location 'localhost:3000/api/asset/v1/image.jpg'
     - https://developers.metaplex.com/core/guides/anchor/how-to-create-a-core-nft-asset-with-anchor
     - https://developers.metaplex.com/core/getting-started/rust
 - [ ] Batch create MPL Core Accounts.
+    - https://solana.com/docs/core/transactions
+    - https://solana.stackexchange.com/questions/17179/can-transactions-with-multiple-instructions-be-sandwiched-or-rearranged-between
+    - https://github.com/project-serum/swap/blob/3da36aaae7af6ce901d68c0280aac34817fe7fd8/tests/swap.js#L181-L212
 - [x] Create a MPL Core Account with a plugin.
 - [ ] Create a MPL Core Account with a plugin and a collection.
     - If you are transferring an Asset which has a collection you will need to pass the collection address in.
