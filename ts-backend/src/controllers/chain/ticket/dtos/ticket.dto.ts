@@ -1,6 +1,13 @@
-import { IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 
 import { AssetV1 } from '@metaplex-foundation/mpl-core';
+
+////////////////////////////////////////////////////////////////////////////////
+
+export class TicketV1BatchCreateReq {
+  @IsNumber()
+  count: number;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

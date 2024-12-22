@@ -65,8 +65,8 @@ export class AnchorClientService {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  async getMplCoreAsset(assetAddress: string): Promise<AssetV1> {
-    return fetchAsset(this.mplUmi, assetAddress);
+  async getMplCoreAsset(base58AssetAddress: string): Promise<AssetV1> {
+    return fetchAsset(this.mplUmi, base58AssetAddress);
   }
 
   async getMplCoreAssetsByOwner(ownerAddress: string): Promise<AssetV1[]> {

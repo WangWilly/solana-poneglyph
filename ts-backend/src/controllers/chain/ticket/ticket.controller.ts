@@ -1,20 +1,27 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 
-import { TicketV1Response } from './dtos/ticket.dto';
+import { TicketV1Response, TicketV1BatchCreateReq } from './dtos/ticket.dto';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@Controller('api/v1/ticket')
+@Controller('api/ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
-  @Post()
+  @Post('v1')
   async createTicket(): Promise<string> {
     return this.ticketService.createCoreAssetTicket();
   }
 
-  @Get(':tid')
+  @Post('v1/batch')
+  async batchCreateTicket(
+    @Body() req: TicketV1BatchCreateReq,
+  ): Promise<string[]> {
+    return this.ticketService.batchCreateCoreAssetTicket(req.count);
+  }
+
+  @Get('v1/:tid')
   async getTicket(@Param('tid') tid: string): Promise<TicketV1Response> {
     const asset = await this.ticketService.getCoreAssetTicket(tid);
 

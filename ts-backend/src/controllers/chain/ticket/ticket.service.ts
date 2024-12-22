@@ -13,7 +13,12 @@ import { plainToInstance } from 'class-transformer';
 import { IsString, validateSync } from 'class-validator';
 
 import { GlobalAppConfigService } from 'src/globals/app-config/app-config.service';
-import { Keypair, SystemProgram } from '@solana/web3.js';
+import {
+  Keypair,
+  SystemProgram,
+  PublicKey,
+  Transaction,
+} from '@solana/web3.js';
 import { AssetV1, MPL_CORE_PROGRAM_ID } from '@metaplex-foundation/mpl-core';
 
 import * as fs from 'fs';
@@ -56,12 +61,10 @@ export class TicketService {
       lifeHelperIdl as LifeHelper,
       this.anchorClientService.getProvider(),
     );
-    // this.systemPayer = anchor.web3.Keypair.fromSecretKey(
-    //   Buffer.from(cfg.SYSTEM_PAYER_KEYPAIR_FILE, 'base64'),
-    // );
+
     const pkPlain = fs.readFileSync(cfg.SYSTEM_PAYER_KEYPAIR_FILE);
-    const pkJson = JSON.parse(pkPlain.toString());
-    const seed = Uint8Array.from(pkJson).slice(0, 32);
+    const pkJsonObj = JSON.parse(pkPlain.toString());
+    const seed = Uint8Array.from(pkJsonObj).slice(0, 32);
     this.systemPayer = anchor.web3.Keypair.fromSeed(seed);
   }
 
@@ -69,6 +72,16 @@ export class TicketService {
 
   async createCoreAssetTicket(): Promise<string> {
     const asset = Keypair.generate();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [life_helper_pda, _life_helper_seed] =
+      PublicKey.findProgramAddressSync(
+        [
+          anchor.utils.bytes.utf8.encode('mpl-core'),
+          asset.publicKey.toBuffer(),
+        ],
+        this.lifeHelperProgram.programId,
+      );
+
     const createAssetArgs = {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
@@ -81,6 +94,8 @@ export class TicketService {
       payer: this.systemPayer.publicKey,
       owner: null,
       updateAuthority: null,
+      lifeHelperPda: life_helper_pda,
+      lifeHelperProgram: this.lifeHelperProgram.programId,
       systemProgram: SystemProgram.programId,
       mplCoreProgram: MPL_CORE_PROGRAM_ID,
     };
@@ -93,6 +108,63 @@ export class TicketService {
 
     return asset.publicKey.toBase58();
   }
+
+  createCoreAssetTicketInstruction(
+    asset: anchor.web3.Keypair,
+  ): Promise<anchor.web3.TransactionInstruction> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [life_helper_pda, _life_helper_seed] =
+      PublicKey.findProgramAddressSync(
+        [
+          anchor.utils.bytes.utf8.encode('mpl-core'),
+          asset.publicKey.toBuffer(),
+        ],
+        this.lifeHelperProgram.programId,
+      );
+
+    const createAssetArgs = {
+      name: 'My Asset',
+      uri: 'https://example.com/my-asset.json',
+      transferLimit: 10,
+    };
+    const accounts = {
+      asset: asset.publicKey,
+      collection: null,
+      authority: null,
+      payer: this.systemPayer.publicKey,
+      owner: null,
+      updateAuthority: null,
+      lifeHelperPda: life_helper_pda,
+      lifeHelperProgram: this.lifeHelperProgram.programId,
+      systemProgram: SystemProgram.programId,
+      mplCoreProgram: MPL_CORE_PROGRAM_ID,
+    };
+
+    const instruction = this.utilsProgram.methods
+      .createTicketV1(createAssetArgs)
+      .accountsPartial(accounts)
+      .signers([asset, this.systemPayer])
+      .instruction();
+
+    return instruction;
+  }
+
+  async batchCreateCoreAssetTicket(count: number): Promise<string[]> {
+    const tx = new Transaction();
+    const assets: anchor.web3.Keypair[] = [];
+    for (let i = 0; i < count; i++) {
+      const asset = Keypair.generate();
+      tx.add(await this.createCoreAssetTicketInstruction(asset));
+      assets.push(asset);
+    }
+    await this.anchorClientService
+      .getProvider()
+      .sendAll([{ tx, signers: [...assets, this.systemPayer] }]);
+
+    return assets.map((asset) => asset.publicKey.toBase58());
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   async getCoreAssetTicket(assetAddress: string): Promise<AssetV1> {
     return this.anchorClientService.getMplCoreAsset(assetAddress);
