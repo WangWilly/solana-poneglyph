@@ -51,11 +51,19 @@ export class TicketService {
   //////////////////////////////////////////////////////////////////////////////
 
   async createCoreAssetTicket(): Promise<string> {
+    const tx = new Transaction();
     const asset = Keypair.generate();
-    await this.ticketHelperService.createCoreAssetTicketInstruction(
-      asset,
-      this.systemPayer,
+    tx.add(
+      await this.ticketHelperService.createCoreAssetTicketInstruction(
+        asset,
+        this.systemPayer,
+      ),
     );
+
+    await this.anchorClientService
+      .getProvider()
+      .sendAll([{ tx, signers: [asset, this.systemPayer] }]);
+
     return asset.publicKey.toBase58();
   }
 
@@ -72,6 +80,7 @@ export class TicketService {
       );
       assets.push(asset);
     }
+
     // TODO: https://stackoverflow.com/questions/74242978/typeerror-provider-send-is-not-a-function-in-anchor
     await this.anchorClientService
       .getProvider()

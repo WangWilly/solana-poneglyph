@@ -52,6 +52,7 @@ pub struct Args4CreateTicketV1 {
     pub name: String,
     pub uri: String,
     pub transfer_limit: u16,
+    pub bump: u8,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,13 +103,15 @@ pub fn create_ticket_v1_impl(
     // https://solana.com/developers/guides/getstarted/how-to-cpi-with-signer
     let payer_seed = ctx.accounts.payer.to_account_info().key();
     let asset_seed = ctx.accounts.asset.to_account_info().key();
-    let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
+    // let bump_seed = ctx.accounts.life_helper_pda.to_account_info().key();
+    let bump_seed = &[args.bump];
     let signer_seeds: &[&[&[u8]]] = &[&[
         payer_seed.as_ref(),
         asset_seed.as_ref(),
         b"mpl-core",
-        bump_seed.as_ref(),
+        bump_seed,
     ]];
+    msg!("signer_seeds: {:?}", signer_seeds);
     let life_helper_ctx =
         CpiContext::new(life_helper_program, life_helper_cpi_accounts).with_signer(signer_seeds);
     life_helper::cpi::initialize(

@@ -87,6 +87,7 @@ pub async fn create_ticket_v1(
                     name: req.name,
                     uri: general_purpose::STANDARD.encode(&encrypted_uri_data),
                     transfer_limit: req.transfer_limit,
+                    bump: _bump,
                 },
             })
             .signer(&asset)

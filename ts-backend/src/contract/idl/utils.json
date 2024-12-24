@@ -353,6 +353,10 @@
           {
             "name": "transfer_limit",
             "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -361,7 +365,12 @@
       "name": "Args4TransferTicketV1",
       "type": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
       }
     },
     {

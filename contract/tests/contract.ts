@@ -299,6 +299,7 @@ describe("utils", () => {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
       transferLimit: 1,
+      bump: life_helper_seed,
     };
     const accounts = {
       asset: asset.publicKey,
@@ -367,7 +368,9 @@ describe("utils", () => {
     /// Act
     {
       const txSign = await errorHandling(
-        program.methods.transferTicketV1({})
+        program.methods.transferTicketV1({
+          bump: life_helper_seed,
+        })
         .accountsPartial(transferAccounts)
         .signers([wallet1.payer])
         .rpc()
@@ -408,7 +411,9 @@ describe("utils", () => {
     /// Act & Assert
     {
       const errorHappened = await expectError(
-        program.methods.transferTicketV1({})
+        program.methods.transferTicketV1({
+          bump: life_helper_seed,
+        })
         .accountsPartial(transferAccounts2)
         .signers([wallet2])
         .rpc()
@@ -432,6 +437,7 @@ describe("utils", () => {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
       transferLimit: 2,
+      bump: life_helper_seed,
     };
     const accounts = {
       asset: asset.publicKey,
@@ -497,7 +503,9 @@ describe("utils", () => {
     {
       console.log("transferTicketV1 - 2");
       const txSign = await errorHandling(
-        program.methods.transferTicketV1({})
+        program.methods.transferTicketV1({
+          bump: life_helper_seed,
+        })
         .accountsPartial(transferAccounts)
         .signers([wallet1.payer])
         .rpc()
@@ -544,7 +552,9 @@ describe("utils", () => {
     {
       console.log("transferTicketV1 - 3");
       const txSign = await errorHandling(
-        program.methods.transferTicketV1({})
+        program.methods.transferTicketV1({
+          bump: life_helper_seed,
+        })
         .accountsPartial(transferAccounts2)
         .signers([wallet2])
         .rpc()
@@ -591,7 +601,9 @@ describe("utils", () => {
     {
       console.log("transferTicketV1 - 4");
       const errorHappened = await expectError(
-        program.methods.transferTicketV1({})
+        program.methods.transferTicketV1({
+          bump: life_helper_seed,
+        })
         .accountsPartial(transferAccounts3)
         .signers([wallet1.payer])
         .rpc()
